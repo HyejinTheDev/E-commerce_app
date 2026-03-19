@@ -1,0 +1,69 @@
+name: ecommerce_app
+description: E-commerce 4-actor mobile application
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_bloc: ^8.1.4
+  equatable: ^2.0.5
+
+  # Dependency Injection
+  get_it: ^7.6.7
+  injectable: ^2.3.2
+
+  # Networking
+  dio: ^5.4.1
+  retrofit: ^4.1.0
+  json_annotation: ^4.8.1
+
+  # Code Generation
+  freezed_annotation: ^2.4.1
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # UI
+  google_fonts: ^6.1.0
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.9
+  lottie: ^3.1.0
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # Utils
+  intl: ^0.19.0
+  image_picker: ^1.0.7
+  url_launcher: ^6.2.4
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+  # Code Generation
+  build_runner: ^2.4.8
+  freezed: ^2.4.7
+  json_serializable: ^6.7.1
+  retrofit_generator: ^8.1.0
+  injectable_generator: ^2.4.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
