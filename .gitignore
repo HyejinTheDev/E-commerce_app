@@ -1,0 +1,3 @@
+# Ignore backend and make_fe directories
+backend/
+make_fe/
