@@ -1,41 +1,153 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-// Feature imports - will be added as features are built
-// import '../../features/auth/presentation/pages/login_page.dart';
-// import '../../features/customer/home/presentation/pages/home_page.dart';
+import '../../features/customer/home/presentation/pages/home_page.dart';
+import '../../features/customer/home/bloc/home_bloc.dart';
+import '../../features/customer/home/bloc/home_event.dart';
+import '../../features/customer/product/presentation/pages/product_detail_page.dart';
+import '../../features/customer/product/bloc/product_detail_bloc.dart';
+import '../../features/customer/product/bloc/product_detail_event.dart';
+import '../../features/customer/categories/presentation/pages/categories_page.dart';
+import '../../features/customer/categories/bloc/categories_bloc.dart';
+import '../../features/customer/categories/bloc/categories_bloc_types.dart';
+import '../../features/customer/cart/presentation/pages/cart_page.dart';
+import '../../features/customer/checkout/presentation/pages/checkout_page.dart';
+import '../../features/customer/checkout/bloc/checkout_bloc.dart';
+import '../../features/customer/search/presentation/pages/search_page.dart';
+import '../../features/customer/search/bloc/search_bloc.dart';
+import '../../features/customer/profile/presentation/pages/profile_page.dart';
+import '../../features/customer/profile/bloc/profile_bloc.dart';
+import '../../features/customer/profile/bloc/profile_bloc_types.dart';
+import '../../features/customer/orders/presentation/pages/orders_page.dart';
+import '../../features/customer/orders/bloc/orders_bloc.dart';
+import '../../features/customer/orders/bloc/orders_event.dart';
+import '../widgets/lucent_bottom_nav.dart';
 
 class AppRouter {
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+
   static final router = GoRouter(
-    initialLocation: '/login',
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: '/home',
     routes: [
-      // Auth
-      GoRoute(path: '/login', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/register', builder: (context, state) => const Placeholder()),
+      // ─── Shell Route (with bottom nav) ───
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) {
+          return _ScaffoldWithNav(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: '/home',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: BlocProvider(
+                create: (_) => HomeBloc()..add(const HomeLoaded()),
+                child: const HomePage(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/search',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: BlocProvider(
+                create: (_) => SearchBloc(),
+                child: const SearchPage(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/cart',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: CartPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/profile',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: BlocProvider(
+                create: (_) => ProfileBloc()..add(const ProfileLoaded()),
+                child: const ProfilePage(),
+              ),
+            ),
+          ),
+        ],
+      ),
 
-      // Customer
-      GoRoute(path: '/home', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/products', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/product/:id', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/cart', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/orders', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/order/:id', builder: (context, state) => const Placeholder()),
-
-      // Seller
-      GoRoute(path: '/seller/dashboard', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/seller/products', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/seller/orders', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/seller/shop', builder: (context, state) => const Placeholder()),
-
-      // Delivery
-      GoRoute(path: '/delivery/shipments', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/delivery/history', builder: (context, state) => const Placeholder()),
-
-      // Admin
-      GoRoute(path: '/admin/dashboard', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/admin/users', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/admin/shops', builder: (context, state) => const Placeholder()),
-      GoRoute(path: '/admin/categories', builder: (context, state) => const Placeholder()),
+      // ─── Full-screen routes (no bottom nav) ───
+      GoRoute(
+        path: '/product/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => ProductDetailBloc()
+            ..add(ProductDetailLoaded(state.pathParameters['id'] ?? '1')),
+          child: ProductDetailPage(
+            productId: state.pathParameters['id'],
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/checkout',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => CheckoutBloc(),
+          child: const CheckoutPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/orders',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => OrdersBloc()..add(const OrdersLoaded()),
+          child: const OrdersPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/categories',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => BlocProvider(
+          create: (_) => CategoriesBloc()..add(const CategoriesLoaded()),
+          child: const CategoriesPage(),
+        ),
+      ),
     ],
   );
+}
+
+/// Main scaffold with bottom navigation
+class _ScaffoldWithNav extends StatelessWidget {
+  final Widget child;
+
+  const _ScaffoldWithNav({required this.child});
+
+  int _currentIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/search')) return 1;
+    if (location.startsWith('/cart')) return 2;
+    if (location.startsWith('/profile')) return 3;
+    return 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: LucentBottomNav(
+        currentIndex: _currentIndex(context),
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/home');
+            case 1:
+              context.go('/search');
+            case 2:
+              context.go('/cart');
+            case 3:
+              context.go('/profile');
+          }
+        },
+      ),
+    );
+  }
 }
