@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/data/mock_data.dart';
+import '../../../../core/repositories/product_repository.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(const HomeState()) {
+  final ProductRepository _productRepository;
+
+  HomeBloc(this._productRepository) : super(const HomeState()) {
     on<HomeLoaded>(_onLoaded);
     on<HomeCategorySelected>(_onCategorySelected);
   }
@@ -12,32 +14,47 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onLoaded(HomeLoaded event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      final response = await _productRepository.getProducts(limit: 10);
+      // Extract unique category names for filter chips
+      final categoryNames = <String>{'All'};
+      for (final p in response.products) {
+        if (p.category.isNotEmpty) categoryNames.add(p.category);
+      }
 
-    emit(state.copyWith(
-      status: HomeStatus.loaded,
-      featuredProducts: MockData.featuredProducts,
-      categories: MockData.categoryFilters,
-    ));
+      emit(state.copyWith(
+        status: HomeStatus.loaded,
+        featuredProducts: response.products,
+        categories: categoryNames.toList(),
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: HomeStatus.error,
+        errorMessage: 'Failed to load products: $e',
+      ));
+    }
   }
 
-  void _onCategorySelected(
-      HomeCategorySelected event, Emitter<HomeState> emit) {
+  Future<void> _onCategorySelected(
+      HomeCategorySelected event, Emitter<HomeState> emit) async {
     emit(state.copyWith(selectedCategory: event.index));
 
-    // Filter products by category
-    if (event.index == 0) {
-      emit(state.copyWith(featuredProducts: MockData.featuredProducts));
-    } else {
-      final category = state.categories[event.index];
-      final filtered = MockData.featuredProducts
-          .where((p) => p.category == category)
-          .toList();
-      emit(state.copyWith(
-        featuredProducts:
-            filtered.isEmpty ? MockData.featuredProducts : filtered,
-      ));
+    try {
+      if (event.index == 0) {
+        // "All" selected — reload without filter
+        final response = await _productRepository.getProducts(limit: 10);
+        emit(state.copyWith(featuredProducts: response.products));
+      } else {
+        // Filter by searching for category name
+        final category = state.categories[event.index];
+        final response = await _productRepository.getProducts(
+          search: category,
+          limit: 10,
+        );
+        emit(state.copyWith(featuredProducts: response.products));
+      }
+    } catch (e) {
+      // Keep current products on error
     }
   }
 }

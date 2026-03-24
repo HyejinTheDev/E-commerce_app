@@ -23,9 +23,15 @@ class DioClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          print('🌐 DIO REQUEST: ${options.method} ${options.baseUrl}${options.path}');
           handler.next(options);
         },
+        onResponse: (response, handler) {
+          print('✅ DIO RESPONSE: ${response.statusCode} ${response.requestOptions.path}');
+          handler.next(response);
+        },
         onError: (error, handler) async {
+          print('❌ DIO ERROR: ${error.type} ${error.message} ${error.requestOptions.path}');
           if (error.response?.statusCode == 401) {
             // TODO: Implement refresh token logic
           }

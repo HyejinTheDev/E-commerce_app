@@ -1,11 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/data/mock_data.dart';
+import '../../../../core/repositories/product_repository.dart';
 import 'product_detail_event.dart';
 import 'product_detail_state.dart';
 
 class ProductDetailBloc
     extends Bloc<ProductDetailEvent, ProductDetailState> {
-  ProductDetailBloc() : super(const ProductDetailState()) {
+  final ProductRepository _productRepository;
+
+  ProductDetailBloc(this._productRepository)
+      : super(const ProductDetailState()) {
     on<ProductDetailLoaded>(_onLoaded);
     on<ProductColorSelected>(_onColorSelected);
     on<ProductSizeSelected>(_onSizeSelected);
@@ -16,13 +19,9 @@ class ProductDetailBloc
       ProductDetailLoaded event, Emitter<ProductDetailState> emit) async {
     emit(state.copyWith(status: ProductDetailStatus.loading));
 
-    await Future.delayed(const Duration(milliseconds: 400));
-
     try {
-      final product = MockData.featuredProducts.firstWhere(
-        (p) => p.id == event.productId,
-        orElse: () => MockData.featuredProducts.first,
-      );
+      final product =
+          await _productRepository.getProductById(event.productId);
       emit(state.copyWith(
         status: ProductDetailStatus.loaded,
         product: product,
@@ -30,7 +29,7 @@ class ProductDetailBloc
     } catch (e) {
       emit(state.copyWith(
         status: ProductDetailStatus.error,
-        errorMessage: 'Product not found',
+        errorMessage: 'Product not found: $e',
       ));
     }
   }

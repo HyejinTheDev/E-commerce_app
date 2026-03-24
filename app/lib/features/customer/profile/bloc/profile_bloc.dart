@@ -1,16 +1,30 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/repositories/user_repository.dart';
 import 'profile_bloc_types.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(const ProfileState()) {
+  final UserRepository _userRepository;
+
+  ProfileBloc(this._userRepository) : super(const ProfileState()) {
     on<ProfileLoaded>(_onLoaded);
     on<ProfilePreferenceToggled>(_onPreferenceToggled);
     on<ProfileSignedOut>(_onSignedOut);
   }
 
-  void _onLoaded(ProfileLoaded event, Emitter<ProfileState> emit) {
-    // Already set with defaults, but could make an API call here
-    emit(const ProfileState());
+  Future<void> _onLoaded(
+      ProfileLoaded event, Emitter<ProfileState> emit) async {
+    try {
+      final user = await _userRepository.getProfile();
+      emit(ProfileState(
+        name: user.name,
+        email: user.email,
+        orderCount: user.orderCount,
+        addressCount: user.addressCount,
+      ));
+    } catch (e) {
+      // If not authenticated, show defaults
+      emit(const ProfileState());
+    }
   }
 
   void _onPreferenceToggled(

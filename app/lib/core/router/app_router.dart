@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../di/injection.dart';
 import '../../features/customer/home/presentation/pages/home_page.dart';
 import '../../features/customer/home/bloc/home_bloc.dart';
 import '../../features/customer/home/bloc/home_event.dart';
@@ -21,6 +22,10 @@ import '../../features/customer/profile/bloc/profile_bloc_types.dart';
 import '../../features/customer/orders/presentation/pages/orders_page.dart';
 import '../../features/customer/orders/bloc/orders_bloc.dart';
 import '../../features/customer/orders/bloc/orders_event.dart';
+import '../repositories/product_repository.dart';
+import '../repositories/category_repository.dart';
+import '../repositories/order_repository.dart';
+import '../repositories/user_repository.dart';
 import '../widgets/lucent_bottom_nav.dart';
 
 class AppRouter {
@@ -42,7 +47,8 @@ class AppRouter {
             path: '/home',
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
-                create: (_) => HomeBloc()..add(const HomeLoaded()),
+                create: (_) => HomeBloc(getIt<ProductRepository>())
+                  ..add(const HomeLoaded()),
                 child: const HomePage(),
               ),
             ),
@@ -51,7 +57,7 @@ class AppRouter {
             path: '/search',
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
-                create: (_) => SearchBloc(),
+                create: (_) => SearchBloc(getIt<ProductRepository>()),
                 child: const SearchPage(),
               ),
             ),
@@ -66,7 +72,8 @@ class AppRouter {
             path: '/profile',
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
-                create: (_) => ProfileBloc()..add(const ProfileLoaded()),
+                create: (_) => ProfileBloc(getIt<UserRepository>())
+                  ..add(const ProfileLoaded()),
                 child: const ProfilePage(),
               ),
             ),
@@ -79,7 +86,7 @@ class AppRouter {
         path: '/product/:id',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => BlocProvider(
-          create: (_) => ProductDetailBloc()
+          create: (_) => ProductDetailBloc(getIt<ProductRepository>())
             ..add(ProductDetailLoaded(state.pathParameters['id'] ?? '1')),
           child: ProductDetailPage(
             productId: state.pathParameters['id'],
@@ -98,7 +105,8 @@ class AppRouter {
         path: '/orders',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => BlocProvider(
-          create: (_) => OrdersBloc()..add(const OrdersLoaded()),
+          create: (_) => OrdersBloc(getIt<OrderRepository>())
+            ..add(const OrdersLoaded()),
           child: const OrdersPage(),
         ),
       ),
@@ -106,7 +114,8 @@ class AppRouter {
         path: '/categories',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => BlocProvider(
-          create: (_) => CategoriesBloc()..add(const CategoriesLoaded()),
+          create: (_) => CategoriesBloc(getIt<CategoryRepository>())
+            ..add(const CategoriesLoaded()),
           child: const CategoriesPage(),
         ),
       ),

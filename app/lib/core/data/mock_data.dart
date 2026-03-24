@@ -104,7 +104,7 @@ class MockData {
     const Order(
       id: 'LU-2847',
       date: 'Mar 20, 2026',
-      status: OrderStatus.inTransit,
+      status: OrderStatus.shipping,
       totalAmount: 274.05,
       itemCount: 3,
       deliveryEstimate: 'Arriving Mar 25',
