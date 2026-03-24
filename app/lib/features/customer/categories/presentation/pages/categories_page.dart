@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/search_bar_widget.dart';
-import '../../categories/bloc/categories_bloc.dart';
-import '../../categories/bloc/categories_bloc_types.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/widgets/search_bar_widget.dart';
+import '../../bloc/categories_bloc.dart';
+import '../../bloc/categories_bloc_types.dart';
 
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});

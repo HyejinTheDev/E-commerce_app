@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../profile/bloc/profile_bloc.dart';
-import '../../profile/bloc/profile_bloc_types.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_text_styles.dart';
+import '../../bloc/profile_bloc.dart';
+import '../../bloc/profile_bloc_types.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

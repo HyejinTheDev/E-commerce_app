@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/cart_item_card.dart';
-import '../../../../core/widgets/pill_button.dart';
-import '../../cart/bloc/cart_bloc.dart';
-import '../../cart/bloc/cart_event.dart';
-import '../../cart/bloc/cart_state.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../core/widgets/cart_item_card.dart';
+import '../../../../../core/widgets/pill_button.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../bloc/cart_state.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
