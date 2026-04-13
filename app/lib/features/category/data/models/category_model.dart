@@ -1,26 +1,8 @@
-import 'package:equatable/equatable.dart';
+import '../../domain/entities/category.dart';
 
-/// Category model
-class Category extends Equatable {
-  final String id;
-  final String name;
-  final String iconName;
-  final int productCount;
-  final String? image;
-  final String? slug;
-
-  const Category({
-    required this.id,
-    required this.name,
-    this.iconName = 'checkroom',
-    this.productCount = 0,
-    this.image,
-    this.slug,
-  });
-
-  /// Parse from backend API JSON
-  factory Category.fromJson(Map<String, dynamic> json) {
-    // Map category name to icon name
+/// CategoryModel — data layer JSON deserialization
+class CategoryModel {
+  static Category fromJson(Map<String, dynamic> json) {
     final name = json['name'] as String;
     final iconMap = {
       'Clothing': 'checkroom',
@@ -44,7 +26,4 @@ class Category extends Equatable {
       slug: json['slug'] as String?,
     );
   }
-
-  @override
-  List<Object?> get props => [id, name];
 }

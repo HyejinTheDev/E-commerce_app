@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/repositories/product_repository.dart';
+import '../../../product/domain/repositories/product_repository.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/models/product.dart';
+import '../../../product/domain/entities/product.dart';
 
 enum SearchStatus { initial, loading, loaded, error }
 

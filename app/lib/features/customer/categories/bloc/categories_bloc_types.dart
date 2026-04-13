@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/models/category.dart';
+import '../../../category/domain/entities/category.dart';
 
 enum CategoriesStatus { initial, loading, loaded, error }
 

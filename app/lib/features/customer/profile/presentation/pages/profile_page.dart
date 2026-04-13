@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../auth/bloc/auth_bloc.dart';
+import '../../../../auth/bloc/auth_event.dart';
 import '../../bloc/profile_bloc.dart';
 import '../../bloc/profile_bloc_types.dart';
 
@@ -17,7 +19,8 @@ class ProfilePage extends StatelessWidget {
         child: BlocConsumer<ProfileBloc, ProfileState>(
           listener: (context, state) {
             if (state.isSignedOut) {
-              // Navigate to login when signed out
+              context.read<AuthBloc>().add(const AuthLogoutRequested());
+              context.go('/login');
             }
           },
           builder: (context, state) {

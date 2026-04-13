@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/repositories/user_repository.dart';
+import '../../../profile/domain/repositories/user_repository.dart';
 import 'profile_bloc_types.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {

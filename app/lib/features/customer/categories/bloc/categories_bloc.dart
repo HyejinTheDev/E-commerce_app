@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/repositories/category_repository.dart';
+import '../../../category/domain/repositories/category_repository.dart';
 import 'categories_bloc_types.dart';
 
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {

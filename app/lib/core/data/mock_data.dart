@@ -1,6 +1,6 @@
-import '../models/product.dart';
-import '../models/category.dart';
-import '../models/order.dart';
+import '../../features/product/domain/entities/product.dart';
+import '../../features/category/domain/entities/category.dart';
+import '../../features/order/domain/entities/order.dart';
 
 /// Mock data for UI development — will be replaced by API calls
 class MockData {

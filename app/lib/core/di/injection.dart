@@ -1,23 +1,82 @@
 import 'package:get_it/get_it.dart';
 import '../network/dio_client.dart';
-import '../repositories/product_repository.dart';
-import '../repositories/category_repository.dart';
-import '../repositories/order_repository.dart';
-import '../repositories/user_repository.dart';
+
+// ─── Auth ───
+import '../../features/auth/data/datasources/auth_remote_datasource.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/domain/usecases/login_usecase.dart';
+import '../../features/auth/domain/usecases/register_usecase.dart';
+import '../../features/auth/domain/usecases/logout_usecase.dart';
+import '../../features/auth/domain/usecases/check_auth_usecase.dart';
+
+// ─── Product ───
+import '../../features/product/data/datasources/product_remote_datasource.dart';
+import '../../features/product/data/repositories/product_repository_impl.dart';
+import '../../features/product/domain/repositories/product_repository.dart';
+import '../../features/product/domain/usecases/get_products_usecase.dart';
+import '../../features/product/domain/usecases/get_product_by_id_usecase.dart';
+
+// ─── Category ───
+import '../../features/category/data/datasources/category_remote_datasource.dart';
+import '../../features/category/data/repositories/category_repository_impl.dart';
+import '../../features/category/domain/repositories/category_repository.dart';
+import '../../features/category/domain/usecases/get_categories_usecase.dart';
+
+// ─── Order ───
+import '../../features/order/data/datasources/order_remote_datasource.dart';
+import '../../features/order/data/repositories/order_repository_impl.dart';
+import '../../features/order/domain/repositories/order_repository.dart';
+import '../../features/order/domain/usecases/get_my_orders_usecase.dart';
+
+// ─── Profile ───
+import '../../features/profile/data/datasources/user_remote_datasource.dart';
+import '../../features/profile/data/repositories/user_repository_impl.dart';
+import '../../features/profile/domain/repositories/user_repository.dart';
+import '../../features/profile/domain/usecases/get_profile_usecase.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
-  // Core
+  // ─── Core ───
   getIt.registerLazySingleton<DioClient>(() => DioClient());
 
-  // Repositories
+  // ─── Auth ───
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSource(getIt<DioClient>()));
+  getIt.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()));
+  getIt.registerLazySingleton(() => LoginUseCase(getIt<AuthRepository>()));
+  getIt.registerLazySingleton(() => RegisterUseCase(getIt<AuthRepository>()));
+  getIt.registerLazySingleton(() => LogoutUseCase(getIt<AuthRepository>()));
+  getIt.registerLazySingleton(() => CheckAuthUseCase(getIt<AuthRepository>()));
+
+  // ─── Product ───
+  getIt.registerLazySingleton<ProductRemoteDataSource>(
+      () => ProductRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<ProductRepository>(
-      () => ProductRepository(getIt<DioClient>()));
+      () => ProductRepositoryImpl(getIt<ProductRemoteDataSource>()));
+  getIt.registerLazySingleton(() => GetProductsUseCase(getIt<ProductRepository>()));
+  getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt<ProductRepository>()));
+
+  // ─── Category ───
+  getIt.registerLazySingleton<CategoryRemoteDataSource>(
+      () => CategoryRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<CategoryRepository>(
-      () => CategoryRepository(getIt<DioClient>()));
+      () => CategoryRepositoryImpl(getIt<CategoryRemoteDataSource>()));
+  getIt.registerLazySingleton(() => GetCategoriesUseCase(getIt<CategoryRepository>()));
+
+  // ─── Order ───
+  getIt.registerLazySingleton<OrderRemoteDataSource>(
+      () => OrderRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<OrderRepository>(
-      () => OrderRepository(getIt<DioClient>()));
+      () => OrderRepositoryImpl(getIt<OrderRemoteDataSource>()));
+  getIt.registerLazySingleton(() => GetMyOrdersUseCase(getIt<OrderRepository>()));
+
+  // ─── Profile ───
+  getIt.registerLazySingleton<UserRemoteDataSource>(
+      () => UserRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<UserRepository>(
-      () => UserRepository(getIt<DioClient>()));
+      () => UserRepositoryImpl(getIt<UserRemoteDataSource>()));
+  getIt.registerLazySingleton(() => GetProfileUseCase(getIt<UserRepository>()));
 }

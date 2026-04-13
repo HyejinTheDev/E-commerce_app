@@ -22,11 +22,13 @@ import '../../features/customer/profile/bloc/profile_bloc_types.dart';
 import '../../features/customer/orders/presentation/pages/orders_page.dart';
 import '../../features/customer/orders/bloc/orders_bloc.dart';
 import '../../features/customer/orders/bloc/orders_event.dart';
-import '../repositories/product_repository.dart';
-import '../repositories/category_repository.dart';
-import '../repositories/order_repository.dart';
-import '../repositories/user_repository.dart';
+import '../../features/product/domain/repositories/product_repository.dart';
+import '../../features/category/domain/repositories/category_repository.dart';
+import '../../features/order/domain/repositories/order_repository.dart';
+import '../../features/profile/domain/repositories/user_repository.dart';
 import '../widgets/lucent_bottom_nav.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -118,6 +120,16 @@ class AppRouter {
             ..add(const CategoriesLoaded()),
           child: const CategoriesPage(),
         ),
+      ),
+      GoRoute(
+        path: '/login',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/register',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RegisterPage(),
       ),
     ],
   );

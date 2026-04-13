@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/models/order.dart';
-import '../../../../core/repositories/order_repository.dart';
+import '../../../order/domain/entities/order.dart';
+import '../../../order/domain/repositories/order_repository.dart';
 import 'orders_event.dart';
 import 'orders_state.dart';
 
