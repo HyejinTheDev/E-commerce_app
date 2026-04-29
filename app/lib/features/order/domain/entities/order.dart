@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/currency_formatter.dart';
 
 /// Order status enum matching backend Prisma enum
 enum OrderStatus {
@@ -42,17 +43,17 @@ class Order extends Equatable {
     this.deliveryEstimate,
   });
 
-  String get formattedTotal => '\$${totalAmount.toStringAsFixed(2)}';
+  String get formattedTotal => CurrencyFormatter.formatVnd(totalAmount);
 
   String get statusLabel {
     switch (status) {
-      case OrderStatus.pending: return 'Pending';
-      case OrderStatus.confirmed: return 'Confirmed';
-      case OrderStatus.processing: return 'Processing';
-      case OrderStatus.shipping: return 'In Transit';
-      case OrderStatus.delivered: return 'Delivered';
-      case OrderStatus.cancelled: return 'Cancelled';
-      case OrderStatus.returned: return 'Returned';
+      case OrderStatus.pending: return 'Chờ xác nhận';
+      case OrderStatus.confirmed: return 'Đã xác nhận';
+      case OrderStatus.processing: return 'Đang xử lý';
+      case OrderStatus.shipping: return 'Đang giao';
+      case OrderStatus.delivered: return 'Đã giao';
+      case OrderStatus.cancelled: return 'Đã huỷ';
+      case OrderStatus.returned: return 'Đã trả';
     }
   }
 

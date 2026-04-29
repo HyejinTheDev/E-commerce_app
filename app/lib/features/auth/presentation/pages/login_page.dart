@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Login failed'),
+              content: Text(state.errorMessage ?? 'Đăng nhập thất bại'),
               backgroundColor: AppColors.terracottaBlush,
             ),
           );
@@ -57,13 +57,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
                 // Header
-                Text('Welcome\nBack', style: AppTextStyles.displayLarge.copyWith(
+                Text('Chào Mừng\nTrở Lại', style: AppTextStyles.displayLarge.copyWith(
                   fontSize: 36,
                   height: 1.2,
                 )),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue shopping',
+                  'Đăng nhập để tiếp tục mua sắm',
                   style: AppTextStyles.bodyLarge,
                 ),
                 const SizedBox(height: 48),
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 // Password field
-                _buildLabel('Password'),
+                _buildLabel('Mật khẩu'),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _passwordController,
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                                   color: AppColors.vanillaCream,
                                 ),
                               )
-                            : Text('Sign In', style: AppTextStyles.button.copyWith(
+                            : Text('Đăng Nhập', style: AppTextStyles.button.copyWith(
                                 color: AppColors.vanillaCream,
                               )),
                       ),
@@ -135,11 +135,11 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () => context.go('/register'),
                     child: RichText(
                       text: TextSpan(
-                        text: "Don't have an account? ",
+                        text: 'Chưa có tài khoản? ',
                         style: AppTextStyles.bodyMedium,
                         children: [
                           TextSpan(
-                            text: 'Sign Up',
+                            text: 'Đăng Ký',
                             style: AppTextStyles.titleSmall.copyWith(
                               color: AppColors.terracottaBlush,
                             ),
@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
+        const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
       );
       return;
     }

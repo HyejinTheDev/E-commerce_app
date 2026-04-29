@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('Spring\nCollection',
+                                Text('Bộ Sưu Tập\nXuân',
                                     style: AppTextStyles.displayLarge
                                         .copyWith(height: 1.1)),
                                 const SizedBox(height: 16),
@@ -108,7 +108,7 @@ class HomePage extends StatelessWidget {
                                     color: AppColors.charcoalInk,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-                                  child: const Text('Shop Now',
+                                  child: const Text('Mua Ngay',
                                       style: TextStyle(
                                           color: AppColors.softWhite,
                                           fontSize: 13,
@@ -152,7 +152,7 @@ class HomePage extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 28, 20, 16),
-                    child: SectionHeader(title: 'Featured', onActionTap: () {}),
+                    child: SectionHeader(title: 'Nổi Bật', onActionTap: () {}),
                   ),
                 ),
 

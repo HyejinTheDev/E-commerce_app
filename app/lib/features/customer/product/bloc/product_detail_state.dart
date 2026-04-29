@@ -10,6 +10,7 @@ class ProductDetailState extends Equatable {
   final int selectedSize;
   final int selectedImage;
   final String? errorMessage;
+  final bool isSubmittingReview;
 
   const ProductDetailState({
     this.status = ProductDetailStatus.initial,
@@ -18,6 +19,7 @@ class ProductDetailState extends Equatable {
     this.selectedSize = 2,
     this.selectedImage = 0,
     this.errorMessage,
+    this.isSubmittingReview = false,
   });
 
   ProductDetailState copyWith({
@@ -27,6 +29,7 @@ class ProductDetailState extends Equatable {
     int? selectedSize,
     int? selectedImage,
     String? errorMessage,
+    bool? isSubmittingReview,
   }) {
     return ProductDetailState(
       status: status ?? this.status,
@@ -35,10 +38,18 @@ class ProductDetailState extends Equatable {
       selectedSize: selectedSize ?? this.selectedSize,
       selectedImage: selectedImage ?? this.selectedImage,
       errorMessage: errorMessage,
+      isSubmittingReview: isSubmittingReview ?? this.isSubmittingReview,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, product, selectedColor, selectedSize, selectedImage, errorMessage];
+  List<Object?> get props => [
+        status,
+        product,
+        selectedColor,
+        selectedSize,
+        selectedImage,
+        errorMessage,
+        isSubmittingReview,
+      ];
 }

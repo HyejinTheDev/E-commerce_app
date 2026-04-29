@@ -18,5 +18,9 @@ class CheckoutDeliverySelected extends CheckoutEvent {
 }
 
 class CheckoutOrderPlaced extends CheckoutEvent {
-  const CheckoutOrderPlaced();
+  final List<Map<String, dynamic>> items;
+  const CheckoutOrderPlaced({required this.items});
+
+  @override
+  List<Object?> get props => [items];
 }

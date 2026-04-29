@@ -11,7 +11,7 @@ class LucentSearchBar extends StatelessWidget {
 
   const LucentSearchBar({
     super.key,
-    this.hint = 'Search products...',
+    this.hint = 'Tìm kiếm sản phẩm...',
     this.onTap,
     this.onChanged,
     this.controller,

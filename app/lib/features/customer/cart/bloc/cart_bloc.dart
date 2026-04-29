@@ -1,16 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/models/cart_item.dart';
+import '../../../voucher/domain/usecases/validate_voucher_usecase.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 
-/// CartBloc — manages shopping cart with Event-driven state
+/// CartBloc — manages shopping cart + voucher with Event-driven state
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc() : super(const CartState()) {
+  final ValidateVoucherUseCase? _validateVoucher;
+
+  CartBloc({ValidateVoucherUseCase? validateVoucher})
+      : _validateVoucher = validateVoucher,
+        super(const CartState()) {
     on<CartItemAdded>(_onItemAdded);
     on<CartItemRemoved>(_onItemRemoved);
     on<CartItemIncremented>(_onItemIncremented);
     on<CartItemDecremented>(_onItemDecremented);
     on<CartCleared>(_onCleared);
+    on<VoucherApplied>(_onVoucherApplied);
+    on<VoucherRemoved>(_onVoucherRemoved);
   }
 
   void _onItemAdded(CartItemAdded event, Emitter<CartState> emit) {
@@ -65,5 +72,42 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onCleared(CartCleared event, Emitter<CartState> emit) {
     emit(const CartState());
+  }
+
+  // ─── Voucher handlers ───
+
+  Future<void> _onVoucherApplied(
+      VoucherApplied event, Emitter<CartState> emit) async {
+    if (_validateVoucher == null) return;
+
+    emit(state.copyWith(voucherLoading: true, voucherError: null));
+
+    try {
+      final voucher = await _validateVoucher.call(event.code);
+
+      // Check minimum order
+      if (state.subtotal < voucher.minOrder) {
+        emit(state.copyWith(
+          voucherLoading: false,
+          voucherError:
+              'Đơn hàng tối thiểu \$${voucher.minOrder.toStringAsFixed(0)} để dùng mã này',
+        ));
+        return;
+      }
+
+      emit(state.copyWith(
+        appliedVoucher: voucher,
+        voucherLoading: false,
+      ));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        voucherLoading: false,
+        voucherError: e.toString().replaceFirst('Exception: ', ''),
+      ));
+    }
+  }
+
+  void _onVoucherRemoved(VoucherRemoved event, Emitter<CartState> emit) {
+    emit(state.copyWith(clearVoucher: true, voucherError: null));
   }
 }

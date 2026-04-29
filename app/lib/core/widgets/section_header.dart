@@ -11,7 +11,7 @@ class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
     required this.title,
-    this.actionText = 'See All',
+    this.actionText = 'Xem tất cả',
     this.onActionTap,
   });
 

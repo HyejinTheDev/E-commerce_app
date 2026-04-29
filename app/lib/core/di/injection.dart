@@ -28,12 +28,19 @@ import '../../features/order/data/datasources/order_remote_datasource.dart';
 import '../../features/order/data/repositories/order_repository_impl.dart';
 import '../../features/order/domain/repositories/order_repository.dart';
 import '../../features/order/domain/usecases/get_my_orders_usecase.dart';
+import '../../features/order/domain/usecases/create_order_usecase.dart';
 
 // ─── Profile ───
 import '../../features/profile/data/datasources/user_remote_datasource.dart';
 import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/repositories/user_repository.dart';
 import '../../features/profile/domain/usecases/get_profile_usecase.dart';
+
+// ─── Voucher ───
+import '../../features/voucher/data/datasources/voucher_remote_datasource.dart';
+import '../../features/voucher/data/repositories/voucher_repository_impl.dart';
+import '../../features/voucher/domain/repositories/voucher_repository.dart';
+import '../../features/voucher/domain/usecases/validate_voucher_usecase.dart';
 
 final getIt = GetIt.instance;
 
@@ -72,6 +79,7 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<OrderRepository>(
       () => OrderRepositoryImpl(getIt<OrderRemoteDataSource>()));
   getIt.registerLazySingleton(() => GetMyOrdersUseCase(getIt<OrderRepository>()));
+  getIt.registerLazySingleton(() => CreateOrderUseCase(getIt<OrderRepository>()));
 
   // ─── Profile ───
   getIt.registerLazySingleton<UserRemoteDataSource>(
@@ -79,4 +87,11 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<UserRepository>(
       () => UserRepositoryImpl(getIt<UserRemoteDataSource>()));
   getIt.registerLazySingleton(() => GetProfileUseCase(getIt<UserRepository>()));
+
+  // ─── Voucher ───
+  getIt.registerLazySingleton<VoucherRemoteDataSource>(
+      () => VoucherRemoteDataSource(getIt<DioClient>()));
+  getIt.registerLazySingleton<VoucherRepository>(
+      () => VoucherRepositoryImpl(getIt<VoucherRemoteDataSource>()));
+  getIt.registerLazySingleton(() => ValidateVoucherUseCase(getIt<VoucherRepository>()));
 }

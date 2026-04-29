@@ -40,4 +40,9 @@ class ProductRepositoryImpl implements ProductRepository {
     final data = await _remoteDataSource.getProductById(id);
     return ProductModel.fromJson(data);
   }
+
+  @override
+  Future<void> addReview(String productId, int rating, String? comment) async {
+    await _remoteDataSource.addReview(productId, rating, comment);
+  }
 }

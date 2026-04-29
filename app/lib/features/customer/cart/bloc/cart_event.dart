@@ -58,3 +58,17 @@ class CartItemDecremented extends CartEvent {
 class CartCleared extends CartEvent {
   const CartCleared();
 }
+
+// ─── Voucher Events ───
+
+class VoucherApplied extends CartEvent {
+  final String code;
+  const VoucherApplied(this.code);
+
+  @override
+  List<Object?> get props => [code];
+}
+
+class VoucherRemoved extends CartEvent {
+  const VoucherRemoved();
+}

@@ -13,6 +13,7 @@ class ProductDetailBloc
     on<ProductColorSelected>(_onColorSelected);
     on<ProductSizeSelected>(_onSizeSelected);
     on<ProductImageSelected>(_onImageSelected);
+    on<ProductReviewSubmitted>(_onReviewSubmitted);
   }
 
   Future<void> _onLoaded(
@@ -47,5 +48,28 @@ class ProductDetailBloc
   void _onImageSelected(
       ProductImageSelected event, Emitter<ProductDetailState> emit) {
     emit(state.copyWith(selectedImage: event.index));
+  }
+
+  Future<void> _onReviewSubmitted(
+      ProductReviewSubmitted event, Emitter<ProductDetailState> emit) async {
+    if (state.product == null) return;
+    emit(state.copyWith(isSubmittingReview: true, errorMessage: null));
+
+    try {
+      await _productRepository.addReview(
+          state.product!.id, event.rating, event.comment);
+      // Reload product to get the new review and updated rating
+      final product =
+          await _productRepository.getProductById(state.product!.id);
+      emit(state.copyWith(
+        isSubmittingReview: false,
+        product: product,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isSubmittingReview: false,
+        errorMessage: 'Không thể gửi đánh giá: $e',
+      ));
+    }
   }
 }

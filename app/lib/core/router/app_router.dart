@@ -16,6 +16,7 @@ import '../../features/customer/checkout/presentation/pages/checkout_page.dart';
 import '../../features/customer/checkout/bloc/checkout_bloc.dart';
 import '../../features/customer/search/presentation/pages/search_page.dart';
 import '../../features/customer/search/bloc/search_bloc.dart';
+import '../../features/customer/search/bloc/search_event.dart';
 import '../../features/customer/profile/presentation/pages/profile_page.dart';
 import '../../features/customer/profile/bloc/profile_bloc.dart';
 import '../../features/customer/profile/bloc/profile_bloc_types.dart';
@@ -59,7 +60,8 @@ class AppRouter {
             path: '/search',
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
-                create: (_) => SearchBloc(getIt<ProductRepository>()),
+                create: (_) => SearchBloc(getIt<ProductRepository>())
+                  ..add(const SearchQueryChanged('')),
                 child: const SearchPage(),
               ),
             ),
@@ -99,7 +101,7 @@ class AppRouter {
         path: '/checkout',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => BlocProvider(
-          create: (_) => CheckoutBloc(),
+          create: (_) => CheckoutBloc(getIt<OrderRepository>()),
           child: const CheckoutPage(),
         ),
       ),

@@ -37,3 +37,13 @@ class ProductImageSelected extends ProductDetailEvent {
   @override
   List<Object?> get props => [index];
 }
+
+class ProductReviewSubmitted extends ProductDetailEvent {
+  final int rating;
+  final String? comment;
+
+  const ProductReviewSubmitted({required this.rating, this.comment});
+
+  @override
+  List<Object?> get props => [rating, comment];
+}

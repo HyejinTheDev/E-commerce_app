@@ -39,14 +39,14 @@ class CategoriesPage extends StatelessWidget {
                   floating: true,
                   backgroundColor: AppColors.vanillaCream,
                   elevation: 0,
-                  title: Text('Categories',
+                  title: Text('Danh Mục',
                       style: AppTextStyles.headlineMedium),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                     child: LucentSearchBar(
-                        hint: 'Search categories...', readOnly: true),
+                        hint: 'Tìm danh mục...', readOnly: true),
                   ),
                 ),
 
@@ -77,7 +77,7 @@ class CategoriesPage extends StatelessWidget {
                               color: AppColors.charcoalInk,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: const Text('Explore',
+                            child: const Text('Khám Phá',
                                 style: TextStyle(
                                     color: AppColors.softWhite,
                                     fontSize: 13,

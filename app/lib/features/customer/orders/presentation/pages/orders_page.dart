@@ -35,7 +35,7 @@ class OrdersPage extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back_rounded),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  title: Text('My Orders',
+                  title: Text('Đơn Hàng',
                       style: AppTextStyles.headlineMedium),
                 ),
 
@@ -76,7 +76,7 @@ class OrdersPage extends StatelessWidget {
                                 const Icon(Icons.receipt_long_outlined,
                                     size: 48, color: AppColors.stoneGray),
                                 const SizedBox(height: 12),
-                                Text('No orders found',
+                                Text('Chưa có đơn hàng',
                                     style: AppTextStyles.titleMedium),
                               ],
                             ),
@@ -89,7 +89,7 @@ class OrdersPage extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 14),
                                 child: OrderCard(
-                                  orderId: 'Order #${order.id}',
+                                  orderId: 'Đơn hàng #${order.id}',
                                   date: order.date,
                                   status: order.statusLabel,
                                   deliveryEstimate: order.deliveryEstimate,

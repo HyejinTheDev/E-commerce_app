@@ -27,7 +27,7 @@ class SearchPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                     child: LucentSearchBar(
-                      hint: 'Search products...',
+                      hint: 'Tìm kiếm sản phẩm...',
                       onChanged: (query) => context
                           .read<SearchBloc>()
                           .add(SearchQueryChanged(query)),
@@ -66,15 +66,21 @@ class SearchPage extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Row(
                       children: [
-                        Text('${state.totalResults} results',
-                            style: AppTextStyles.bodySmall),
+                        Text(
+                          state.query.isEmpty
+                              ? 'Gợi ý cho bạn'
+                              : '${state.totalResults} kết quả',
+                          style: AppTextStyles.bodySmall,
+                        ),
                         const Spacer(),
-                        Text('Sort by: ', style: AppTextStyles.bodySmall),
-                        Text('Relevance',
-                            style:
-                                AppTextStyles.titleSmall.copyWith(fontSize: 13)),
-                        const Icon(Icons.keyboard_arrow_down_rounded,
-                            size: 18, color: AppColors.charcoalInk),
+                        if (state.query.isNotEmpty || state.results.isNotEmpty) ...[
+                          Text('Sắp xếp: ', style: AppTextStyles.bodySmall),
+                          Text('Liên quan',
+                              style: AppTextStyles.titleSmall
+                                  .copyWith(fontSize: 13)),
+                          const Icon(Icons.keyboard_arrow_down_rounded,
+                              size: 18, color: AppColors.charcoalInk),
+                        ],
                       ],
                     ),
                   ),
@@ -135,7 +141,7 @@ class SearchPage extends StatelessWidget {
                               shape: const StadiumBorder(),
                             ),
                             child:
-                                Text('Load More', style: AppTextStyles.titleSmall),
+                                Text('Xem Thêm', style: AppTextStyles.titleSmall),
                           ),
                         ),
                       ),

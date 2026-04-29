@@ -10,4 +10,6 @@ abstract class ProductRepository {
   });
 
   Future<Product> getProductById(String id);
+
+  Future<void> addReview(String productId, int rating, String? comment);
 }

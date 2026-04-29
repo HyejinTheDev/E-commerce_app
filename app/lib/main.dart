@@ -11,6 +11,7 @@ import 'features/auth/domain/usecases/register_usecase.dart';
 import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/check_auth_usecase.dart';
 import 'features/customer/cart/bloc/cart_bloc.dart';
+import 'features/voucher/domain/usecases/validate_voucher_usecase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +44,9 @@ class LucentApp extends StatelessWidget {
           )..add(const AuthCheckRequested()),
         ),
         // Global CartBloc — shared across all screens
-        BlocProvider<CartBloc>(create: (_) => CartBloc()),
+        BlocProvider<CartBloc>(create: (_) => CartBloc(
+          validateVoucher: getIt<ValidateVoucherUseCase>(),
+        )),
       ],
       child: MaterialApp.router(
         title: 'Lucent',

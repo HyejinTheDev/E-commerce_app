@@ -1,4 +1,5 @@
 import '../../domain/entities/product.dart';
+import '../../domain/entities/review.dart';
 
 /// Data model with JSON serialization — extends domain entity concept
 class ProductModel {
@@ -14,15 +15,27 @@ class ProductModel {
     String? badge;
     if (salePrice != null && salePrice < basePrice) {
       final discount = ((basePrice - salePrice) / basePrice * 100).round();
-      badge = '$discount% OFF';
+      badge = 'Giảm $discount%';
     }
 
     // Extract reviews info
-    final reviews = json['reviews'] as List<dynamic>? ?? [];
-    final avgRating = reviews.isNotEmpty
-        ? reviews.fold<double>(0, (sum, r) => sum + (r['rating'] as int)) /
-            reviews.length
+    final reviewsJson = json['reviews'] as List<dynamic>? ?? [];
+    final avgRating = reviewsJson.isNotEmpty
+        ? reviewsJson.fold<double>(0, (sum, r) => sum + (r['rating'] as int)) /
+            reviewsJson.length
         : 0.0;
+        
+    final parsedReviews = reviewsJson.map((r) {
+      final user = r['user'] as Map<String, dynamic>?;
+      return Review(
+        id: r['id'] as String,
+        userName: user?['name'] as String? ?? 'Khách',
+        userAvatar: user?['avatar'] as String?,
+        rating: r['rating'] as int,
+        comment: r['comment'] as String?,
+        createdAt: DateTime.tryParse(r['createdAt'] as String? ?? '') ?? DateTime.now(),
+      );
+    }).toList();
 
     return Product(
       id: json['id'] as String,
@@ -34,10 +47,11 @@ class ProductModel {
       imageUrl: imagesList.isNotEmpty ? imagesList.first : '',
       description: json['description'] as String? ?? '',
       rating: avgRating,
-      reviewCount: reviews.length,
+      reviewCount: reviewsJson.length,
       category: json['category']?['name'] as String? ?? '',
       images: imagesList,
       stock: json['stock'] as int? ?? 0,
+      reviews: parsedReviews,
     );
   }
 }

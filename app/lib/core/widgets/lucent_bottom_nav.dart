@@ -34,21 +34,21 @@ class LucentBottomNav extends StatelessWidget {
               _NavItem(
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home_rounded,
-                label: 'Home',
+                label: 'Trang chủ',
                 isActive: currentIndex == 0,
                 onTap: () => onTap(0),
               ),
               _NavItem(
                 icon: Icons.search_rounded,
                 activeIcon: Icons.search_rounded,
-                label: 'Search',
+                label: 'Tìm kiếm',
                 isActive: currentIndex == 1,
                 onTap: () => onTap(1),
               ),
               _NavItem(
                 icon: Icons.shopping_bag_outlined,
                 activeIcon: Icons.shopping_bag_rounded,
-                label: 'Cart',
+                label: 'Giỏ hàng',
                 isActive: currentIndex == 2,
                 onTap: () => onTap(2),
                 badge: 3,
@@ -56,7 +56,7 @@ class LucentBottomNav extends StatelessWidget {
               _NavItem(
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
-                label: 'Profile',
+                label: 'Cá nhân',
                 isActive: currentIndex == 3,
                 onTap: () => onTap(3),
               ),

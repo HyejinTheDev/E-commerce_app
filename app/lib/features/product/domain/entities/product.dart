@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/utils/currency_formatter.dart';
+import 'review.dart';
 
 /// Pure domain entity — no fromJson, no framework dependencies
 class Product extends Equatable {
@@ -17,6 +19,7 @@ class Product extends Equatable {
   final String category;
   final List<String> images;
   final int stock;
+  final List<Review> reviews;
 
   const Product({
     required this.id,
@@ -34,11 +37,12 @@ class Product extends Equatable {
     this.category = '',
     this.images = const [],
     this.stock = 0,
+    this.reviews = const [],
   });
 
-  String get formattedPrice => '\$${price.toStringAsFixed(2)}';
+  String get formattedPrice => CurrencyFormatter.formatVnd(price);
   String? get formattedOriginalPrice =>
-      originalPrice != null ? '\$${originalPrice!.toStringAsFixed(2)}' : null;
+      originalPrice != null ? CurrencyFormatter.formatVnd(originalPrice!) : null;
 
   @override
   List<Object?> get props => [id, name, brand, price];

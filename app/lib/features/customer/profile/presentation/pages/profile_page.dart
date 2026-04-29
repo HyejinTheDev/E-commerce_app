@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Profile',
+                        Text('Hồ Sơ',
                             style: AppTextStyles.displayLarge
                                 .copyWith(fontSize: 28)),
                         Container(
@@ -68,7 +68,7 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(100),
                     ),
                     child:
-                        Text('Edit Profile', style: AppTextStyles.titleSmall),
+                        Text('Sửa hồ sơ', style: AppTextStyles.titleSmall),
                   ),
 
                   // Stats
@@ -78,12 +78,12 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         _StatCard(
                             count: '${state.orderCount}',
-                            label: 'Orders',
+                            label: 'Đơn hàng',
                             icon: Icons.shopping_bag_outlined),
                         const SizedBox(width: 14),
                         _StatCard(
                             count: '${state.addressCount}',
-                            label: 'Addresses',
+                            label: 'Địa chỉ',
                             icon: Icons.location_on_outlined),
                       ],
                     ),
@@ -106,24 +106,24 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         _MenuItem(
                             icon: Icons.shopping_bag_outlined,
-                            label: 'My Orders',
+                            label: 'Đơn hàng của tôi',
                             onTap: () => context.push('/orders')),
                         _MenuItem(
                             icon: Icons.location_on_outlined,
-                            label: 'Shipping Addresses',
+                            label: 'Địa chỉ giao hàng',
                             onTap: () {}),
                         _MenuItem(
                             icon: Icons.credit_card_outlined,
-                            label: 'Payment Methods',
+                            label: 'Phương thức thanh toán',
                             onTap: () {}),
                         _MenuItem(
                             icon: Icons.notifications_none_rounded,
-                            label: 'Notifications',
+                            label: 'Thông báo',
                             badge: '3 new',
                             onTap: () {}),
                         _MenuItem(
                             icon: Icons.help_outline_rounded,
-                            label: 'Help & Support',
+                            label: 'Trợ giúp & Hỗ trợ',
                             onTap: () {},
                             showDivider: false),
                       ],
@@ -135,7 +135,7 @@ class ProfilePage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 28, bottom: 8),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Preferences',
+                      child: Text('Tuỳ chỉnh',
                           style: AppTextStyles.titleMedium),
                     ),
                   ),
@@ -147,7 +147,7 @@ class ProfilePage extends StatelessWidget {
                     child: Column(
                       children: [
                         _ToggleItem(
-                            label: 'Dark Mode',
+                            label: 'Chế độ tối',
                             value: state.darkMode,
                             onChanged: (v) => context
                                 .read<ProfileBloc>()
@@ -158,7 +158,7 @@ class ProfilePage extends StatelessWidget {
                             endIndent: 16,
                             color: AppColors.pearlMist),
                         _ToggleItem(
-                            label: 'Push Notifications',
+                            label: 'Thông báo đẩy',
                             value: state.pushNotifications,
                             onChanged: (v) => context
                                 .read<ProfileBloc>()
@@ -170,7 +170,7 @@ class ProfilePage extends StatelessWidget {
                             endIndent: 16,
                             color: AppColors.pearlMist),
                         _ToggleItem(
-                            label: 'Email Updates',
+                            label: 'Cập nhật qua email',
                             value: state.emailUpdates,
                             onChanged: (v) => context
                                 .read<ProfileBloc>()
@@ -194,7 +194,7 @@ class ProfilePage extends StatelessWidget {
                           color: AppColors.pearlMist,
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: Text('Sign Out',
+                        child: Text('Đăng Xuất',
                             style: AppTextStyles.titleSmall
                                 .copyWith(color: AppColors.stoneGray)),
                       ),

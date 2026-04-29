@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Registration failed'),
+              content: Text(state.errorMessage ?? 'Đăng ký thất bại'),
               backgroundColor: AppColors.terracottaBlush,
             ),
           );
@@ -61,22 +61,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 32),
                 // Header
-                Text('Create\nAccount', style: AppTextStyles.displayLarge.copyWith(
+                Text('Tạo\nTài Khoản', style: AppTextStyles.displayLarge.copyWith(
                   fontSize: 36,
                   height: 1.2,
                 )),
                 const SizedBox(height: 8),
                 Text(
-                  'Join us and start shopping',
+                  'Tham gia và bắt đầu mua sắm',
                   style: AppTextStyles.bodyLarge,
                 ),
                 const SizedBox(height: 36),
                 // Name field
-                _buildLabel('Full Name'),
+                _buildLabel('Họ và tên'),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _nameController,
-                  hint: 'John Doe',
+                  hint: 'Nguyễn Văn A',
                   icon: Icons.person_outline,
                 ),
                 const SizedBox(height: 20),
@@ -91,11 +91,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
                 // Password field
-                _buildLabel('Password'),
+                _buildLabel('Mật khẩu'),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _passwordController,
-                  hint: 'Min 6 characters',
+                  hint: 'Tối thiểu 6 ký tự',
                   obscure: _obscurePassword,
                   icon: Icons.lock_outline,
                   suffixIcon: IconButton(
@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
                 // Phone field (optional)
-                _buildLabel('Phone (optional)'),
+                _buildLabel('Số điện thoại (tuỳ chọn)'),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _phoneController,
@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   color: AppColors.vanillaCream,
                                 ),
                               )
-                            : Text('Create Account', style: AppTextStyles.button.copyWith(
+                            : Text('Tạo Tài Khoản', style: AppTextStyles.button.copyWith(
                                 color: AppColors.vanillaCream,
                               )),
                       ),
@@ -158,11 +158,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     onTap: () => context.go('/login'),
                     child: RichText(
                       text: TextSpan(
-                        text: 'Already have an account? ',
+                        text: 'Đã có tài khoản? ',
                         style: AppTextStyles.bodyMedium,
                         children: [
                           TextSpan(
-                            text: 'Sign In',
+                            text: 'Đăng Nhập',
                             style: AppTextStyles.titleSmall.copyWith(
                               color: AppColors.terracottaBlush,
                             ),
@@ -227,14 +227,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in required fields')),
+        const SnackBar(content: Text('Vui lòng nhập các trường bắt buộc')),
       );
       return;
     }
 
     if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password must be at least 6 characters')),
+        const SnackBar(content: Text('Mật khẩu phải có ít nhất 6 ký tự')),
       );
       return;
     }

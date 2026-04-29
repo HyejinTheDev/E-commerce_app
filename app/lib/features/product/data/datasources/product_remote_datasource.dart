@@ -30,4 +30,14 @@ class ProductRemoteDataSource {
     final response = await _client.dio.get('/products/$id');
     return response.data as Map<String, dynamic>;
   }
+
+  Future<void> addReview(String productId, int rating, String? comment) async {
+    await _client.dio.post(
+      '/products/$productId/reviews',
+      data: {
+        'rating': rating,
+        if (comment != null && comment.isNotEmpty) 'comment': comment,
+      },
+    );
+  }
 }
