@@ -7,6 +7,8 @@ abstract class ProductRepository {
     String? categoryId,
     int page = 1,
     int limit = 20,
+    String? sort,
+    double? maxPrice,
   });
 
   Future<Product> getProductById(String id);

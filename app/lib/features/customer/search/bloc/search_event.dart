@@ -20,6 +20,13 @@ class SearchFilterSelected extends SearchEvent {
   List<Object?> get props => [index];
 }
 
+class SearchSortChanged extends SearchEvent {
+  final String sortKey;
+  const SearchSortChanged(this.sortKey);
+  @override
+  List<Object?> get props => [sortKey];
+}
+
 class SearchLoadMore extends SearchEvent {
   const SearchLoadMore();
 }

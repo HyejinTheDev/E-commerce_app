@@ -42,6 +42,9 @@ import '../../features/voucher/data/repositories/voucher_repository_impl.dart';
 import '../../features/voucher/domain/repositories/voucher_repository.dart';
 import '../../features/voucher/domain/usecases/validate_voucher_usecase.dart';
 
+// ─── Seller ───
+import '../../features/seller/data/datasources/seller_remote_datasource.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
@@ -94,4 +97,8 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<VoucherRepository>(
       () => VoucherRepositoryImpl(getIt<VoucherRemoteDataSource>()));
   getIt.registerLazySingleton(() => ValidateVoucherUseCase(getIt<VoucherRepository>()));
+
+  // ─── Seller ───
+  getIt.registerLazySingleton<SellerRemoteDataSource>(
+      () => SellerRemoteDataSource(getIt<DioClient>()));
 }

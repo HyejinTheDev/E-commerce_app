@@ -20,7 +20,7 @@ class OrdersPage extends StatelessWidget {
         child: BlocBuilder<OrdersBloc, OrdersState>(
           builder: (context, state) {
             if (state.status == OrdersStatus.loading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(color: AppColors.charcoalInk),
               );
             }
@@ -73,7 +73,7 @@ class OrdersPage extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.receipt_long_outlined,
+                                Icon(Icons.receipt_long_outlined,
                                     size: 48, color: AppColors.stoneGray),
                                 const SizedBox(height: 12),
                                 Text('Chưa có đơn hàng',

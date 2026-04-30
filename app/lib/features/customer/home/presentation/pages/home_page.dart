@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state.status == HomeStatus.loading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(color: AppColors.charcoalInk),
               );
             }
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                             _IconBtn(Icons.notifications_none_rounded,
                                 onTap: () {}),
                             const SizedBox(width: 8),
-                            const CircleAvatar(
+                            CircleAvatar(
                               radius: 20,
                               backgroundColor: AppColors.pearlMist,
                               child: Icon(Icons.person_outline_rounded,
@@ -108,7 +108,7 @@ class HomePage extends StatelessWidget {
                                     color: AppColors.charcoalInk,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-                                  child: const Text('Mua Ngay',
+                                  child: Text('Mua Ngay',
                                       style: TextStyle(
                                           color: AppColors.softWhite,
                                           fontSize: 13,

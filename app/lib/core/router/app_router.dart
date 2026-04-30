@@ -30,16 +30,63 @@ import '../../features/profile/domain/repositories/user_repository.dart';
 import '../widgets/lucent_bottom_nav.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/auth/bloc/auth_state.dart';
+// Seller
+import '../../features/seller/presentation/pages/seller_shell_page.dart';
+// Delivery
+import '../../features/delivery/presentation/pages/delivery_shell_page.dart';
+
+/// Bridges AuthBloc stream → GoRouter refreshListenable
+class AuthNotifier extends ChangeNotifier {
+  AuthStatus _status = AuthStatus.initial;
+  String? _role;
+
+  AuthStatus get status => _status;
+  String? get role => _role;
+
+  void update(AuthState state) {
+    final changed = _status != state.status || _role != state.userRole;
+    _status = state.status;
+    _role = state.userRole;
+    if (changed) notifyListeners();
+  }
+}
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+  static final authNotifier = AuthNotifier();
 
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
+    refreshListenable: authNotifier,
+    redirect: (context, state) {
+      final authStatus = authNotifier.status;
+      final role = authNotifier.role;
+      final location = state.uri.path;
+      final isAuthPage = location == '/login' || location == '/register';
+
+      // Still loading — don't redirect yet
+      if (authStatus == AuthStatus.initial || authStatus == AuthStatus.loading) {
+        return null;
+      }
+
+      // Not logged in → force to login (unless already there)
+      if (authStatus == AuthStatus.unauthenticated || authStatus == AuthStatus.error) {
+        return isAuthPage ? null : '/login';
+      }
+
+      // Logged in — redirect away from auth pages → always /home
+      if (authStatus == AuthStatus.authenticated && isAuthPage) {
+        return '/home';
+      }
+
+      return null; // no redirect
+    },
     routes: [
-      // ─── Shell Route (with bottom nav) ───
+      // ─── Customer Shell Route (with bottom nav) ───
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -83,6 +130,20 @@ class AppRouter {
             ),
           ),
         ],
+      ),
+
+      // ─── Seller (self-contained shell with bottom nav) ───
+      GoRoute(
+        path: '/seller',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SellerShellPage(),
+      ),
+
+      // ─── Delivery (self-contained shell with bottom nav) ───
+      GoRoute(
+        path: '/delivery',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const DeliveryShellPage(),
       ),
 
       // ─── Full-screen routes (no bottom nav) ───
@@ -137,7 +198,7 @@ class AppRouter {
   );
 }
 
-/// Main scaffold with bottom navigation
+/// Main scaffold with bottom navigation (Customer)
 class _ScaffoldWithNav extends StatelessWidget {
   final Widget child;
 

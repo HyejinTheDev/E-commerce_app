@@ -54,7 +54,7 @@ class CartItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: imageUrl.startsWith('http')
                   ? Image.network(imageUrl, fit: BoxFit.cover)
-                  : const Icon(Icons.image_outlined, color: AppColors.stoneGray),
+                  : Icon(Icons.image_outlined, color: AppColors.stoneGray),
             ),
           ),
           const SizedBox(width: 14),
@@ -77,7 +77,7 @@ class CartItemCard extends StatelessWidget {
               if (onRemove != null)
                 GestureDetector(
                   onTap: onRemove,
-                  child: const Icon(Icons.close, size: 18, color: AppColors.stoneGray),
+                  child: Icon(Icons.close, size: 18, color: AppColors.stoneGray),
                 ),
               const SizedBox(height: 12),
               Container(

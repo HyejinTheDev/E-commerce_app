@@ -25,17 +25,21 @@ class ProductModel {
             reviewsJson.length
         : 0.0;
         
-    final parsedReviews = reviewsJson.map((r) {
+    // Parse full review objects (detail endpoint) — skip partial ones (list endpoint)
+    final parsedReviews = <Review>[];
+    for (final r in reviewsJson) {
+      // List API may only include {rating: int} without id/user — skip those
+      if (r['id'] == null) continue;
       final user = r['user'] as Map<String, dynamic>?;
-      return Review(
+      parsedReviews.add(Review(
         id: r['id'] as String,
         userName: user?['name'] as String? ?? 'Khách',
         userAvatar: user?['avatar'] as String?,
         rating: r['rating'] as int,
         comment: r['comment'] as String?,
         createdAt: DateTime.tryParse(r['createdAt'] as String? ?? '') ?? DateTime.now(),
-      );
-    }).toList();
+      ));
+    }
 
     return Product(
       id: json['id'] as String,

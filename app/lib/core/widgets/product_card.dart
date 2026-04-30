@@ -62,7 +62,7 @@ class ProductCard extends StatelessWidget {
                                 ),
                               );
                             },
-                            errorBuilder: (_, __, ___) => const Center(
+                            errorBuilder: (_, __, ___) => Center(
                               child: Icon(
                                 Icons.image_outlined,
                                 size: 40,
@@ -70,7 +70,7 @@ class ProductCard extends StatelessWidget {
                               ),
                             ),
                           )
-                        : const Center(
+                        : Center(
                             child: Icon(
                               Icons.image_outlined,
                               size: 40,

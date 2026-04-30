@@ -26,14 +26,27 @@ class AuthRegisterRequested extends AuthEvent {
   final String password;
   final String name;
   final String? phone;
+  final String role; // CUSTOMER, SELLER, DELIVERY
+  // Seller-specific
+  final String? shopName;
+  final String? shopDescription;
+  // Delivery-specific
+  final String? vehicleType;
+  final String? licensePlate;
+
   const AuthRegisterRequested({
     required this.email,
     required this.password,
     required this.name,
     this.phone,
+    this.role = 'CUSTOMER',
+    this.shopName,
+    this.shopDescription,
+    this.vehicleType,
+    this.licensePlate,
   });
   @override
-  List<Object?> get props => [email, password, name, phone];
+  List<Object?> get props => [email, password, name, phone, role];
 }
 
 /// Logout

@@ -24,7 +24,7 @@ class CartPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.shopping_bag_outlined,
+                    Icon(Icons.shopping_bag_outlined,
                         size: 64, color: AppColors.stoneGray),
                     const SizedBox(height: 16),
                     Text('Giỏ hàng trống',
@@ -250,7 +250,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
         children: [
           Row(
             children: [
-              const Icon(Icons.local_offer_outlined,
+              Icon(Icons.local_offer_outlined,
                   size: 18, color: AppColors.warmSand),
               const SizedBox(width: 8),
               Text('Mã giảm giá', style: AppTextStyles.titleSmall),
@@ -335,7 +335,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: widget.state.voucherLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 18,
                             height: 18,
                             child: CircularProgressIndicator(

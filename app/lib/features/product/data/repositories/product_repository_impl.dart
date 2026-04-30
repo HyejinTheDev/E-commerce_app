@@ -15,12 +15,16 @@ class ProductRepositoryImpl implements ProductRepository {
     String? categoryId,
     int page = 1,
     int limit = 20,
+    String? sort,
+    double? maxPrice,
   }) async {
     final data = await _remoteDataSource.getProducts(
       search: search,
       categoryId: categoryId,
       page: page,
       limit: limit,
+      sort: sort,
+      maxPrice: maxPrice,
     );
 
     final products = (data['data'] as List<dynamic>)

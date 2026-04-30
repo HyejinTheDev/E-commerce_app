@@ -164,7 +164,7 @@ class CheckoutPage extends StatelessWidget {
                                   color: AppColors.pearlMist,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.credit_card_rounded,
+                                child: Icon(Icons.credit_card_rounded,
                                     size: 20, color: AppColors.charcoalInk),
                               ),
                               const SizedBox(width: 12),

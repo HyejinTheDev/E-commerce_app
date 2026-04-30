@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
+
   bool _obscurePassword = true;
 
   @override
@@ -35,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-          context.go('/profile');
+          context.go('/home');
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -57,7 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Back button
                 GestureDetector(
                   onTap: () => context.canPop() ? context.pop() : context.go('/login'),
-                  child: const Icon(Icons.arrow_back, color: AppColors.charcoalInk),
+                  child: Icon(Icons.arrow_back, color: AppColors.charcoalInk),
                 ),
                 const SizedBox(height: 32),
                 // Header
@@ -67,11 +68,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 )),
                 const SizedBox(height: 8),
                 Text(
-                  'Tham gia và bắt đầu mua sắm',
+                  'Đăng ký miễn phí và bắt đầu mua sắm',
                   style: AppTextStyles.bodyLarge,
                 ),
                 const SizedBox(height: 36),
-                // Name field
+
+                // ─── Fields ───
                 _buildLabel('Họ và tên'),
                 const SizedBox(height: 8),
                 _buildTextField(
@@ -80,7 +82,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   icon: Icons.person_outline,
                 ),
                 const SizedBox(height: 20),
-                // Email field
                 _buildLabel('Email'),
                 const SizedBox(height: 8),
                 _buildTextField(
@@ -90,7 +91,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   icon: Icons.mail_outline,
                 ),
                 const SizedBox(height: 20),
-                // Password field
                 _buildLabel('Mật khẩu'),
                 const SizedBox(height: 8),
                 _buildTextField(
@@ -108,7 +108,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Phone field (optional)
                 _buildLabel('Số điện thoại (tuỳ chọn)'),
                 const SizedBox(height: 8),
                 _buildTextField(
@@ -117,6 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   keyboardType: TextInputType.phone,
                   icon: Icons.phone_outlined,
                 ),
+
                 const SizedBox(height: 36),
                 // Register button
                 BlocBuilder<AuthBloc, AuthState>(
@@ -136,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           elevation: 0,
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
@@ -239,11 +239,13 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
+    // Always register as CUSTOMER
     context.read<AuthBloc>().add(AuthRegisterRequested(
       email: email,
       password: password,
       name: name,
       phone: phone.isNotEmpty ? phone : null,
+      role: 'CUSTOMER',
     ));
   }
 }

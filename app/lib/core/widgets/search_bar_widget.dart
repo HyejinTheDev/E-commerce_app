@@ -30,7 +30,7 @@ class LucentSearchBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.search_rounded,
               size: 22,
               color: AppColors.stoneGray,
@@ -40,7 +40,7 @@ class LucentSearchBar extends StatelessWidget {
               child: readOnly
                   ? Text(
                       hint,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: AppColors.stoneGray,
                       ),
@@ -48,13 +48,13 @@ class LucentSearchBar extends StatelessWidget {
                   : TextField(
                       controller: controller,
                       onChanged: onChanged,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: AppColors.charcoalInk,
                       ),
                       decoration: InputDecoration(
                         hintText: hint,
-                        hintStyle: const TextStyle(
+                        hintStyle: TextStyle(
                           fontSize: 14,
                           color: AppColors.stoneGray,
                         ),

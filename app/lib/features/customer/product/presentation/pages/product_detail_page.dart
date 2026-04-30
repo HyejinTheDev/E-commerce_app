@@ -37,7 +37,7 @@ class ProductDetailPage extends StatelessWidget {
           builder: (context, state) {
           if (state.status == ProductDetailStatus.loading ||
               state.product == null) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: AppColors.charcoalInk),
             );
           }
@@ -110,13 +110,13 @@ class ProductDetailPage extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      errorBuilder: (_, __, ___) => const Center(
+                                      errorBuilder: (_, __, ___) => Center(
                                         child: Icon(Icons.image_outlined,
                                             size: 60,
                                             color: AppColors.stoneGray),
                                       ),
                                     )
-                                  : const Center(
+                                  : Center(
                                       child: Icon(Icons.image_outlined,
                                           size: 60, color: AppColors.stoneGray),
                                     ),
@@ -151,7 +151,7 @@ class ProductDetailPage extends StatelessWidget {
                                         displayImages[index],
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) =>
-                                            const Icon(Icons.image_outlined,
+                                            Icon(Icons.image_outlined,
                                                 size: 24,
                                                 color: AppColors.stoneGray),
                                       ),
@@ -314,7 +314,7 @@ class ProductDetailPage extends StatelessWidget {
                                 Text('Đánh giá',
                                     style: AppTextStyles.titleMedium),
                                 const SizedBox(width: 10),
-                                const Icon(Icons.star_rounded,
+                                Icon(Icons.star_rounded,
                                     color: AppColors.warmSand, size: 18),
                                 const SizedBox(width: 4),
                                 Text(product.rating.toStringAsFixed(1),
@@ -351,7 +351,7 @@ class ProductDetailPage extends StatelessWidget {
                               ],
                             ),
                             if (state.isSubmittingReview)
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.symmetric(vertical: 16),
                                 child: Center(
                                   child: CircularProgressIndicator(
@@ -360,7 +360,7 @@ class ProductDetailPage extends StatelessWidget {
                               ),
                             const SizedBox(height: 16),
                             if (product.reviews.isEmpty)
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(16.0),
                                 child: Text('Chưa có đánh giá nào cho sản phẩm này.',
                                     style: TextStyle(color: AppColors.stoneGray)),
@@ -509,7 +509,7 @@ class _ReviewCard extends StatelessWidget {
                 radius: 16,
                 backgroundColor: AppColors.pearlMist,
                 child: Text(name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: AppColors.charcoalInk,
                         fontWeight: FontWeight.w600)),
               ),
@@ -562,7 +562,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.vanillaCream,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

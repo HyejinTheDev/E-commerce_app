@@ -7,12 +7,12 @@ class LoginParams {
   const LoginParams(this.email, this.password);
 }
 
-class LoginUseCase extends UseCase<void, LoginParams> {
+class LoginUseCase extends UseCase<Map<String, dynamic>, LoginParams> {
   final AuthRepository _repository;
   LoginUseCase(this._repository);
 
   @override
-  Future<void> call(LoginParams params) {
+  Future<Map<String, dynamic>> call(LoginParams params) {
     return _repository.login(params.email, params.password);
   }
 }

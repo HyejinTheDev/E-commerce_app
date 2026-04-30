@@ -28,7 +28,7 @@ class CategoriesPage extends StatelessWidget {
         child: BlocBuilder<CategoriesBloc, CategoriesState>(
           builder: (context, state) {
             if (state.status == CategoriesStatus.loading) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(color: AppColors.charcoalInk),
               );
             }
@@ -77,7 +77,7 @@ class CategoriesPage extends StatelessWidget {
                               color: AppColors.charcoalInk,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: const Text('Khám Phá',
+                            child: Text('Khám Phá',
                                 style: TextStyle(
                                     color: AppColors.softWhite,
                                     fontSize: 13,

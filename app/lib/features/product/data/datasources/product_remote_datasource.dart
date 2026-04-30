@@ -11,6 +11,8 @@ class ProductRemoteDataSource {
     String? categoryId,
     int page = 1,
     int limit = 20,
+    String? sort,
+    double? maxPrice,
   }) async {
     final queryParams = <String, dynamic>{
       'page': page,
@@ -18,6 +20,8 @@ class ProductRemoteDataSource {
     };
     if (search != null && search.isNotEmpty) queryParams['search'] = search;
     if (categoryId != null) queryParams['categoryId'] = categoryId;
+    if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
+    if (maxPrice != null) queryParams['maxPrice'] = maxPrice;
 
     final response = await _client.dio.get(
       '/products',

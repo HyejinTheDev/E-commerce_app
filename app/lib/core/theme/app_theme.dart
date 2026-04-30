@@ -16,7 +16,7 @@ class AppTheme {
       canvasColor: AppColors.vanillaCream,
 
       // ─── Color Scheme ───
-      colorScheme: const ColorScheme.light(
+      colorScheme: ColorScheme.light(
         primary: AppColors.charcoalInk,
         onPrimary: AppColors.softWhite,
         secondary: AppColors.warmSand,
@@ -98,7 +98,7 @@ class AppTheme {
           letterSpacing: -0.44,
           color: AppColors.charcoalInk,
         ),
-        iconTheme: const IconThemeData(color: AppColors.charcoalInk, size: 24),
+        iconTheme: IconThemeData(color: AppColors.charcoalInk, size: 24),
       ),
 
       // ─── Buttons ───
@@ -119,7 +119,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.charcoalInk,
-          side: const BorderSide(color: AppColors.pearlMist),
+          side: BorderSide(color: AppColors.pearlMist),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: const StadiumBorder(),
           textStyle: GoogleFonts.inter(
@@ -152,7 +152,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
+          borderSide: BorderSide(
             color: AppColors.warmSand,
             width: 1.5,
           ),
@@ -175,7 +175,7 @@ class AppTheme {
       ),
 
       // ─── Bottom Nav ───
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.softWhite,
         selectedItemColor: AppColors.charcoalInk,
         unselectedItemColor: AppColors.stoneGray,
@@ -200,18 +200,127 @@ class AppTheme {
       ),
 
       // ─── Divider ───
-      dividerTheme: const DividerThemeData(
+      dividerTheme: DividerThemeData(
         color: AppColors.pearlMist,
         thickness: 1,
         space: 0,
       ),
 
       // ─── Bottom Sheet ───
-      bottomSheetTheme: const BottomSheetThemeData(
+      bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.softWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
+      ),
+    );
+  }
+
+  // ─── Dark Theme ───
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      canvasColor: const Color(0xFF121212),
+
+      colorScheme: const ColorScheme.dark(
+        primary: Color(0xFFF5F0E8),
+        onPrimary: Color(0xFF1A1A1A),
+        secondary: Color(0xFFBFA98A),
+        onSecondary: Color(0xFF1A1A1A),
+        tertiary: Color(0xFF81C784),
+        error: Color(0xFFEF9A9A),
+        surface: Color(0xFF1E1E1E),
+        onSurface: Color(0xFFF5F0E8),
+        onSurfaceVariant: Color(0xFF9E9E9E),
+        outline: Color(0xFF3A3A3A),
+        outlineVariant: Color(0xFF2A2A2A),
+      ),
+
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
+        displayLarge: GoogleFonts.inter(
+          fontSize: 32, fontWeight: FontWeight.w600,
+          letterSpacing: -0.64, color: const Color(0xFFF5F0E8),
+        ),
+        headlineMedium: GoogleFonts.inter(
+          fontSize: 22, fontWeight: FontWeight.w600,
+          letterSpacing: -0.44, color: const Color(0xFFF5F0E8),
+        ),
+        titleLarge: GoogleFonts.inter(
+          fontSize: 18, fontWeight: FontWeight.w600, color: const Color(0xFFF5F0E8),
+        ),
+        titleMedium: GoogleFonts.inter(
+          fontSize: 16, fontWeight: FontWeight.w600, color: const Color(0xFFF5F0E8),
+        ),
+        titleSmall: GoogleFonts.inter(
+          fontSize: 14, fontWeight: FontWeight.w500, color: const Color(0xFFF5F0E8),
+        ),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 16, fontWeight: FontWeight.w400, height: 1.6,
+          color: const Color(0xFF9E9E9E),
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14, fontWeight: FontWeight.w400, height: 1.5,
+          color: const Color(0xFF9E9E9E),
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12, fontWeight: FontWeight.w400, color: const Color(0xFF9E9E9E),
+        ),
+        labelMedium: GoogleFonts.inter(
+          fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5,
+          color: const Color(0xFF9E9E9E),
+        ),
+      ),
+
+      appBarTheme: AppBarTheme(
+        centerTitle: false, elevation: 0, scrolledUnderElevation: 0,
+        backgroundColor: const Color(0xFF121212),
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 22, fontWeight: FontWeight.w600,
+          letterSpacing: -0.44, color: const Color(0xFFF5F0E8),
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFFF5F0E8), size: 24),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFF5F0E8),
+          foregroundColor: const Color(0xFF1A1A1A),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          shape: const StadiumBorder(),
+          textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      ),
+
+      cardTheme: CardThemeData(
+        elevation: 0,
+        color: const Color(0xFF1E1E1E),
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: EdgeInsets.zero,
+      ),
+
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Color(0xFF1A1A1A),
+        selectedItemColor: Color(0xFFF5F0E8),
+        unselectedItemColor: Color(0xFF6E6E6E),
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+      ),
+
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+
+      dividerTheme: const DividerThemeData(
+        color: Color(0xFF2A2A2A), thickness: 1, space: 0,
       ),
     );
   }

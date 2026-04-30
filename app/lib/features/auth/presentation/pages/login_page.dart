@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-          context.go('/profile');
+          context.go('/home');
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Back button
                 GestureDetector(
                   onTap: () => context.canPop() ? context.pop() : context.go('/home'),
-                  child: const Icon(Icons.arrow_back, color: AppColors.charcoalInk),
+                  child: Icon(Icons.arrow_back, color: AppColors.charcoalInk),
                 ),
                 const SizedBox(height: 40),
                 // Header
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                           elevation: 0,
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
