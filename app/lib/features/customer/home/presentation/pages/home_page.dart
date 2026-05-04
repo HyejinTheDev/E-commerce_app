@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../../../core/network/dio_client.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/product_card.dart';
@@ -39,8 +41,7 @@ class HomePage extends StatelessWidget {
                         Text('Lucent', style: AppTextStyles.displayLarge),
                         Row(
                           children: [
-                            _IconBtn(Icons.notifications_none_rounded,
-                                onTap: () {}),
+                            _NotifBell(),
                             const SizedBox(width: 8),
                             CircleAvatar(
                               radius: 20,
@@ -211,6 +212,69 @@ class _IconBtn extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, size: 22, color: AppColors.charcoalInk),
+      ),
+    );
+  }
+}
+
+class _NotifBell extends StatefulWidget {
+  @override
+  State<_NotifBell> createState() => _NotifBellState();
+}
+
+class _NotifBellState extends State<_NotifBell> {
+  int _unreadCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCount();
+  }
+
+  Future<void> _fetchCount() async {
+    try {
+      final dio = getIt<DioClient>().dio;
+      final res = await dio.get('/notifications/unread');
+      if (mounted) setState(() => _unreadCount = res.data['unreadCount'] ?? 0);
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        await context.push('/notifications');
+        _fetchCount();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.pearlMist,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(Icons.notifications_none_rounded, size: 22, color: AppColors.charcoalInk),
+            if (_unreadCount > 0)
+              Positioned(
+                right: -6, top: -6,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFEF5350),
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    _unreadCount > 9 ? '9+' : '$_unreadCount',
+                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w700),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

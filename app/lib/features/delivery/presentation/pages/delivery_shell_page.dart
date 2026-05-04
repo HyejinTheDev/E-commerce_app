@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -51,10 +52,13 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
     try {
       final dio = getIt<DioClient>().dio;
       final response = await dio.get('/delivery/shipments');
+      debugPrint('📦 Shipments loaded: ${(response.data as List).length}');
       if (mounted) {
         setState(() => _shipments = response.data as List<dynamic>);
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('❌ Shipments error: $e');
+    }
   }
 
   Future<void> _loadHistory() async {
@@ -89,8 +93,8 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        backgroundColor: Colors.white,
-        indicatorColor: const Color(0xFFE8E2D8),
+        backgroundColor: AppColors.softWhite,
+        indicatorColor: AppColors.pearlMist,
         height: 65,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
@@ -153,8 +157,9 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.go('/home'),
                         icon: Icon(Icons.close_rounded, color: AppColors.stoneGray),
+                        tooltip: 'Quay về mua sắm',
                       ),
                     ],
                   ),

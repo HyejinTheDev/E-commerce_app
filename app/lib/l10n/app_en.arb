@@ -1,0 +1,154 @@
+{
+  "@@locale": "en",
+
+  "appName": "Lucent",
+
+  "home": "Home",
+  "explore": "Explore",
+  "cart": "Cart",
+  "orders": "Orders",
+  "profile": "Profile",
+
+  "search": "Search",
+  "searchHint": "Search products, brands...",
+  "categories": "Categories",
+  "allCategories": "All",
+  "featuredProducts": "Featured Products",
+  "newArrivals": "New Arrivals",
+  "seeAll": "See all",
+
+  "productDetail": "Product Detail",
+  "selectSize": "Select size",
+  "selectColor": "Select color",
+  "description": "Description",
+  "reviews": "Reviews",
+  "writeReview": "Write a review",
+  "submitReview": "Submit Review",
+  "reviewHint": "Share your thoughts about this product...",
+  "total": "Total",
+  "addToCart": "Cart",
+  "buyNow": "Buy Now",
+  "addedToCart": "has been added to cart",
+  "stock": "Stock",
+  "inStock": "In Stock",
+  "outOfStock": "Out of Stock",
+
+  "cartTitle": "Shopping Cart",
+  "cartEmpty": "Your cart is empty",
+  "cartEmptyDesc": "Add products to start shopping",
+  "checkout": "Checkout",
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "freeShipping": "Free",
+  "orderTotal": "Order Total",
+  "removeItem": "Remove",
+
+  "checkoutTitle": "Checkout",
+  "shippingAddress": "Shipping Address",
+  "paymentMethod": "Payment Method",
+  "placeOrder": "Place Order",
+  "orderSuccess": "Order placed successfully!",
+  "orderSuccessDesc": "Your order has been created.",
+  "cod": "Cash on Delivery",
+  "bankTransfer": "Bank Transfer",
+  "voucher": "Voucher Code",
+  "applyVoucher": "Apply",
+
+  "ordersTitle": "My Orders",
+  "orderTracking": "Order Tracking",
+  "trackOrder": "Track",
+  "orderStatus": "Status",
+  "pending": "Pending",
+  "confirmed": "Confirmed",
+  "processing": "Processing",
+  "shippingStatus": "Shipping",
+  "delivered": "Delivered",
+  "cancelled": "Cancelled",
+  "noOrders": "No orders yet",
+  "noOrdersDesc": "Your orders will appear here after you place one",
+
+  "profileTitle": "Profile",
+  "editProfile": "Edit Profile",
+  "addresses": "Addresses",
+  "paymentMethods": "Payment Methods",
+  "notifications": "Notifications",
+  "messages": "Messages",
+  "helpSupport": "Help & Support",
+  "settings": "Settings",
+  "language": "Language",
+  "darkMode": "Dark Mode",
+  "logout": "Log out",
+  "logoutConfirm": "Are you sure you want to log out?",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+
+  "sellerDashboard": "My Shop",
+  "sellerProducts": "Products",
+  "sellerOrders": "Orders",
+  "sellerVouchers": "Vouchers",
+  "registerSeller": "Register as Seller",
+
+  "deliveryDashboard": "Delivery",
+  "deliveryShipments": "Shipments",
+  "deliveryHistory": "History",
+
+  "adminPanel": "Admin Panel",
+  "adminUsers": "Users",
+  "adminShops": "Shops",
+  "adminDrivers": "Drivers",
+  "adminStats": "Statistics",
+
+  "chatTitle": "Messages",
+  "chatEmpty": "No messages yet",
+  "chatEmptyDesc": "Start chatting with sellers from product pages",
+  "chatInputHint": "Type a message...",
+  "startChat": "Start a conversation!",
+  "online": "Online",
+  "justNow": "Just now",
+
+  "notificationsTitle": "Notifications",
+  "noNotifications": "No notifications",
+  "noNotificationsDesc": "You'll get notified when your order status changes",
+  "readAll": "Read all",
+  "minutesAgo": "{count} min ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{count}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysAgo": "{count}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "login": "Log in",
+  "register": "Sign up",
+  "email": "Email",
+  "password": "Password",
+  "name": "Name",
+  "phone": "Phone number",
+  "forgotPassword": "Forgot password?",
+  "dontHaveAccount": "Don't have an account?",
+  "alreadyHaveAccount": "Already have an account?",
+
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "close": "Close",
+  "back": "Back",
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "success": "Success",
+  "noData": "No data",
+  "items": "items"
+}

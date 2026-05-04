@@ -125,10 +125,16 @@ class ProductCard extends StatelessWidget {
           // Price row
           Row(
             children: [
-              Text(price, style: AppTextStyles.priceMedium),
+              Flexible(
+                child: Text(price, style: AppTextStyles.priceMedium,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
               if (originalPrice != null) ...[
                 const SizedBox(width: 6),
-                Text(originalPrice!, style: AppTextStyles.priceStrikethrough),
+                Flexible(
+                  child: Text(originalPrice!, style: AppTextStyles.priceStrikethrough,
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
               ],
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../profile/domain/repositories/user_repository.dart';
+import '../../../../main.dart' show themeNotifier;
 import 'profile_bloc_types.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
@@ -20,6 +21,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         email: user.email,
         orderCount: user.orderCount,
         addressCount: user.addressCount,
+        darkMode: themeNotifier.isDarkMode,
       ));
     } catch (e) {
       // If not authenticated, show defaults

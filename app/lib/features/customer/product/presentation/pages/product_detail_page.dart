@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/di/injection.dart';
+import '../../../../../core/network/dio_client.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/pill_button.dart';
@@ -402,6 +404,38 @@ class ProductDetailPage extends StatelessWidget {
                   top: false,
                   child: Row(
                     children: [
+                      // Chat button
+                      GestureDetector(
+                        onTap: () async {
+                          try {
+                            final dio = getIt<DioClient>().dio;
+                            // Fetch product detail to get shop sellerId
+                            final res = await dio.get('/products/${product.id}');
+                            final shopData = res.data['shop'] as Map<String, dynamic>?;
+                            final sellerId = shopData?['sellerId'] as String?;
+                            if (sellerId != null && context.mounted) {
+                              final convRes = await dio.post('/chat/conversations', data: {
+                                'otherUserId': sellerId,
+                                'shopId': shopData?['id'],
+                              });
+                              final convId = convRes.data['id'] as String;
+                              if (context.mounted) context.push('/chat/$convId');
+                            }
+                          } catch (e) {
+                            debugPrint('❌ Chat error: $e');
+                          }
+                        },
+                        child: Container(
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.pearlMist,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.chat_bubble_outline_rounded,
+                              color: AppColors.charcoalInk, size: 20),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,

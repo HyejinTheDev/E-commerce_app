@@ -21,6 +21,7 @@ import '../../features/customer/profile/presentation/pages/profile_page.dart';
 import '../../features/customer/profile/bloc/profile_bloc.dart';
 import '../../features/customer/profile/bloc/profile_bloc_types.dart';
 import '../../features/customer/orders/presentation/pages/orders_page.dart';
+import '../../features/customer/orders/presentation/pages/order_tracking_page.dart';
 import '../../features/customer/orders/bloc/orders_bloc.dart';
 import '../../features/customer/orders/bloc/orders_event.dart';
 import '../../features/product/domain/repositories/product_repository.dart';
@@ -36,6 +37,13 @@ import '../../features/auth/bloc/auth_state.dart';
 import '../../features/seller/presentation/pages/seller_shell_page.dart';
 // Delivery
 import '../../features/delivery/presentation/pages/delivery_shell_page.dart';
+// Admin
+import '../../features/admin/presentation/admin_shell_page.dart';
+// Chat
+import '../../features/chat/presentation/pages/chat_list_page.dart';
+import '../../features/chat/presentation/pages/chat_detail_page.dart';
+// Notifications
+import '../../features/notifications/presentation/pages/notifications_page.dart';
 
 /// Bridges AuthBloc stream → GoRouter refreshListenable
 class AuthNotifier extends ChangeNotifier {
@@ -82,6 +90,9 @@ class AppRouter {
       if (authStatus == AuthStatus.authenticated && isAuthPage) {
         return '/home';
       }
+
+      // Redirect root '/' to '/home'
+      if (location == '/') return '/home';
 
       return null; // no redirect
     },
@@ -146,6 +157,34 @@ class AppRouter {
         builder: (context, state) => const DeliveryShellPage(),
       ),
 
+      // ─── Admin Panel ───
+      GoRoute(
+        path: '/admin',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AdminShellPage(),
+      ),
+
+      // ─── Chat ───
+      GoRoute(
+        path: '/chat',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ChatListPage(),
+      ),
+      GoRoute(
+        path: '/chat/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => ChatDetailPage(
+          conversationId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+
+      // ─── Notifications ───
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const NotificationsPage(),
+      ),
+
       // ─── Full-screen routes (no bottom nav) ───
       GoRoute(
         path: '/product/:id',
@@ -173,6 +212,13 @@ class AppRouter {
           create: (_) => OrdersBloc(getIt<OrderRepository>())
             ..add(const OrdersLoaded()),
           child: const OrdersPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/orders/:id',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => OrderTrackingPage(
+          orderId: state.pathParameters['id'] ?? '',
         ),
       ),
       GoRoute(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../order/domain/entities/order.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -89,14 +90,15 @@ class OrdersPage extends StatelessWidget {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 14),
                                 child: OrderCard(
-                                  orderId: 'Đơn hàng #${order.id}',
+                                  orderId: 'Đơn hàng #${order.id.substring(0, 8)}',
                                   date: order.date,
                                   status: order.statusLabel,
                                   deliveryEstimate: order.deliveryEstimate,
                                   totalAmount: order.formattedTotal,
                                   itemCount: order.itemCount,
+                                  onTap: () => context.push('/orders/${order.id}'),
                                   onTrack: order.status == OrderStatus.shipping
-                                      ? () {}
+                                      ? () => context.push('/orders/${order.id}')
                                       : null,
                                 ),
                               );

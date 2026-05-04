@@ -13,6 +13,7 @@
         "equatable",
         "flutter",
         "flutter_bloc",
+        "flutter_localizations",
         "flutter_secure_storage",
         "flutter_svg",
         "freezed_annotation",
@@ -367,6 +368,15 @@
         "bloc",
         "flutter",
         "provider"
+      ]
+    },
+    {
+      "name": "flutter_localizations",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter",
+        "intl",
+        "path"
       ]
     },
     {

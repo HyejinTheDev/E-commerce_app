@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
+import '../../../../../main.dart' show localeProvider;
 import '../../../../../core/di/injection.dart';
 import '../../../../../core/network/dio_client.dart';
 import '../../../../auth/bloc/auth_bloc.dart';
@@ -15,22 +17,40 @@ import 'edit_profile_page.dart';
 import '../../../../../main.dart' show themeNotifier;
 
 void _onSellerCenterTap(BuildContext context) async {
-  // Check if user is already a seller
+  // Show loading indicator
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+
   try {
     final dio = getIt<DioClient>().dio;
     final response = await dio.get('/seller/status');
     final data = response.data;
 
+    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
+
     if (data['isSeller'] == true && context.mounted) {
-      // Already a seller → go to seller dashboard
       context.push('/seller');
     } else if (context.mounted) {
-      // Not yet → show registration dialog
       _showSellerRegistrationDialog(context);
     }
   } catch (e) {
+    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
+
+    final isAuthError = e.toString().contains('401');
     if (context.mounted) {
-      _showSellerRegistrationDialog(context);
+      if (isAuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi kết nối: $e')),
+        );
+      }
     }
   }
 }
@@ -42,7 +62,7 @@ void _showSellerRegistrationDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.softWhite,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -199,10 +219,19 @@ Future<void> _registerSeller(
 // ─── Delivery Center Functions ───
 
 void _onDeliveryCenterTap(BuildContext context) async {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+
   try {
     final dio = getIt<DioClient>().dio;
     final response = await dio.get('/delivery/status');
     final data = response.data;
+
+    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
 
     if (data['isDriver'] == true && context.mounted) {
       context.push('/delivery');
@@ -210,8 +239,19 @@ void _onDeliveryCenterTap(BuildContext context) async {
       _showDeliveryRegistrationDialog(context);
     }
   } catch (e) {
+    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
+
+    final isAuthError = e.toString().contains('401');
     if (context.mounted) {
-      _showDeliveryRegistrationDialog(context);
+      if (isAuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi kết nối: $e')),
+        );
+      }
     }
   }
 }
@@ -223,7 +263,7 @@ void _showDeliveryRegistrationDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.softWhite,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -377,7 +417,7 @@ Future<void> _registerDriver(
 void _showPaymentMethods(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.softWhite,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -436,7 +476,7 @@ Widget _paymentTile(IconData icon, String label, bool isActive) {
 void _showNotifications(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.softWhite,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -502,7 +542,7 @@ Widget _notifTile(String emoji, String title, String desc, String time) {
 void _showHelp(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.softWhite,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -678,11 +718,71 @@ class ProfilePage extends StatelessWidget {
                         _MenuItem(
                             icon: Icons.notifications_none_rounded,
                             label: 'Thông báo',
-                            onTap: () => _showNotifications(context)),
+                            onTap: () => context.push('/notifications')),
+                        _MenuItem(
+                            icon: Icons.chat_bubble_outline_rounded,
+                            label: 'Tin nhắn',
+                            onTap: () => context.push('/chat')),
                         _MenuItem(
                             icon: Icons.help_outline_rounded,
                             label: 'Trợ giúp & Hỗ trợ',
-                            onTap: () => _showHelp(context),
+                            onTap: () => _showHelp(context)),
+                        _MenuItem(
+                            icon: Icons.language_rounded,
+                            label: 'Ngôn ngữ / Language',
+                            trailing: Text(
+                              localeProvider.isVietnamese ? '🇻🇳 Tiếng Việt' : '🇺🇸 English',
+                              style: TextStyle(fontSize: 13, color: AppColors.stoneGray),
+                            ),
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                builder: (ctx) => Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.softWhite,
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                                  ),
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 40, height: 4,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.pearlMist,
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Text('Chọn ngôn ngữ / Choose Language',
+                                          style: AppTextStyles.titleMedium),
+                                      const SizedBox(height: 20),
+                                      _LangOption(
+                                        flag: '🇻🇳',
+                                        label: 'Tiếng Việt',
+                                        selected: localeProvider.isVietnamese,
+                                        onTap: () {
+                                          localeProvider.setLocale(const Locale('vi'));
+                                          Navigator.pop(ctx);
+                                        },
+                                      ),
+                                      const SizedBox(height: 10),
+                                      _LangOption(
+                                        flag: '🇺🇸',
+                                        label: 'English',
+                                        selected: !localeProvider.isVietnamese,
+                                        onTap: () {
+                                          localeProvider.setLocale(const Locale('en'));
+                                          Navigator.pop(ctx);
+                                        },
+                                      ),
+                                      SizedBox(height: MediaQuery.of(ctx).padding.bottom + 12),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                             showDivider: false),
                       ],
                     ),
@@ -797,6 +897,66 @@ class ProfilePage extends StatelessWidget {
                         ],
                       ),
                     ),
+                  ),
+
+                  // Admin Panel — only visible for ADMIN role
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, authState) {
+                      debugPrint('🔑 Admin check: userRole=${authState.userRole}');
+                      if (authState.userRole != 'ADMIN') return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: GestureDetector(
+                          onTap: () => context.push('/admin'),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(Icons.admin_panel_settings_rounded,
+                                      color: Colors.white, size: 24),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Admin Panel',
+                                          style: AppTextStyles.titleSmall
+                                              .copyWith(color: Colors.white)),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        'Quản lý hệ thống & duyệt đơn',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.6),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.chevron_right_rounded,
+                                    color: Colors.white54),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
 
                   // Preferences
@@ -925,12 +1085,14 @@ class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final String? badge;
+  final Widget? trailing;
   final VoidCallback onTap;
   final bool showDivider;
   const _MenuItem(
       {required this.icon,
       required this.label,
       this.badge,
+      this.trailing,
       required this.onTap,
       this.showDivider = true});
 
@@ -961,6 +1123,7 @@ class _MenuItem extends StatelessWidget {
                             fontSize: 10,
                             fontWeight: FontWeight.w600)),
                   ),
+                if (trailing != null) trailing!,
                 const SizedBox(width: 8),
                 Icon(Icons.chevron_right_rounded,
                     size: 20, color: AppColors.stoneGray),
@@ -972,6 +1135,37 @@ class _MenuItem extends StatelessWidget {
           Divider(
               height: 0, indent: 16, endIndent: 16, color: AppColors.pearlMist),
       ],
+    );
+  }
+}
+
+class _LangOption extends StatelessWidget {
+  final String flag;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _LangOption({required this.flag, required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFF0EDFF) : AppColors.pearlMist,
+          borderRadius: BorderRadius.circular(16),
+          border: selected ? Border.all(color: const Color(0xFF5C6BC0), width: 1.5) : null,
+        ),
+        child: Row(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 24)),
+            const SizedBox(width: 14),
+            Expanded(child: Text(label, style: AppTextStyles.titleSmall)),
+            if (selected) Icon(Icons.check_circle_rounded, color: const Color(0xFF5C6BC0), size: 22),
+          ],
+        ),
+      ),
     );
   }
 }

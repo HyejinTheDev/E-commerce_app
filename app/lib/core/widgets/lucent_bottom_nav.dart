@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 /// 4-tab bottom navigation: Home, Search, Cart, Profile
@@ -14,6 +15,7 @@ class LucentBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.softWhite,
@@ -34,21 +36,21 @@ class LucentBottomNav extends StatelessWidget {
               _NavItem(
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home_rounded,
-                label: 'Trang chủ',
+                label: l.home,
                 isActive: currentIndex == 0,
                 onTap: () => onTap(0),
               ),
               _NavItem(
                 icon: Icons.search_rounded,
                 activeIcon: Icons.search_rounded,
-                label: 'Tìm kiếm',
+                label: l.search,
                 isActive: currentIndex == 1,
                 onTap: () => onTap(1),
               ),
               _NavItem(
                 icon: Icons.shopping_bag_outlined,
                 activeIcon: Icons.shopping_bag_rounded,
-                label: 'Giỏ hàng',
+                label: l.cart,
                 isActive: currentIndex == 2,
                 onTap: () => onTap(2),
                 badge: 3,
@@ -56,7 +58,7 @@ class LucentBottomNav extends StatelessWidget {
               _NavItem(
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
-                label: 'Cá nhân',
+                label: l.profile,
                 isActive: currentIndex == 3,
                 onTap: () => onTap(3),
               ),

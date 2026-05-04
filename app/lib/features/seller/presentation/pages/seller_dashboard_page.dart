@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/currency_formatter.dart';
-import '../../../auth/bloc/auth_bloc.dart';
-import '../../../auth/bloc/auth_event.dart';
 import '../../bloc/seller_bloc.dart';
 import '../../bloc/seller_event.dart';
 import '../../bloc/seller_state.dart';
@@ -78,11 +77,10 @@ class SellerDashboardPage extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {
-                          context.read<AuthBloc>().add(const AuthLogoutRequested());
-                        },
-                        icon: Icon(Icons.logout_rounded,
+                        onPressed: () => context.go('/home'),
+                        icon: Icon(Icons.storefront_outlined,
                             color: AppColors.stoneGray),
+                        tooltip: 'Quay về mua sắm',
                       ),
                     ],
                   ),

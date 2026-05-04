@@ -6,6 +6,9 @@ class DioClient {
   late final Dio dio;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  /// Callback set by AuthBloc to handle forced logout
+  static void Function()? onForceLogout;
+
   DioClient() {
     dio = Dio(
       BaseOptions(
@@ -32,7 +35,10 @@ class DioClient {
         onError: (error, handler) async {
           print('❌ DIO ERROR: ${error.type} ${error.message} ${error.requestOptions.path}');
           if (error.response?.statusCode == 401) {
-            // TODO: Implement refresh token logic
+            // Token expired — clear and force logout
+            await _storage.delete(key: AppConstants.accessTokenKey);
+            await _storage.delete(key: AppConstants.refreshTokenKey);
+            onForceLogout?.call();
           }
           handler.next(error);
         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../bloc/seller_bloc.dart';
 import '../../bloc/seller_event.dart';
 import '../../data/datasources/seller_remote_datasource.dart';
@@ -39,8 +40,8 @@ class _SellerShellPageState extends State<SellerShellPage> {
         ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _currentIndex,
-          backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFFE8E2D8),
+          backgroundColor: AppColors.softWhite,
+          indicatorColor: AppColors.pearlMist,
           height: 65,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           onDestinationSelected: (index) => setState(() => _currentIndex = index),

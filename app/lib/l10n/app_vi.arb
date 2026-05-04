@@ -1,0 +1,154 @@
+{
+  "@@locale": "vi",
+
+  "appName": "Lucent",
+
+  "home": "Trang chủ",
+  "explore": "Khám phá",
+  "cart": "Giỏ hàng",
+  "orders": "Đơn hàng",
+  "profile": "Hồ sơ",
+
+  "search": "Tìm kiếm",
+  "searchHint": "Tìm sản phẩm, thương hiệu...",
+  "categories": "Danh mục",
+  "allCategories": "Tất cả",
+  "featuredProducts": "Sản phẩm nổi bật",
+  "newArrivals": "Hàng mới về",
+  "seeAll": "Xem tất cả",
+
+  "productDetail": "Chi Tiết Sản Phẩm",
+  "selectSize": "Chọn size",
+  "selectColor": "Chọn màu",
+  "description": "Mô tả",
+  "reviews": "Đánh giá",
+  "writeReview": "Viết đánh giá",
+  "submitReview": "Gửi Đánh Giá",
+  "reviewHint": "Hãy chia sẻ nhận xét của bạn về sản phẩm...",
+  "total": "Tổng",
+  "addToCart": "Giỏ",
+  "buyNow": "Mua Ngay",
+  "addedToCart": "đã được thêm vào giỏ hàng",
+  "stock": "Kho",
+  "inStock": "Còn hàng",
+  "outOfStock": "Hết hàng",
+
+  "cartTitle": "Giỏ Hàng",
+  "cartEmpty": "Giỏ hàng trống",
+  "cartEmptyDesc": "Thêm sản phẩm để bắt đầu mua sắm",
+  "checkout": "Thanh Toán",
+  "subtotal": "Tạm tính",
+  "shipping": "Phí vận chuyển",
+  "freeShipping": "Miễn phí",
+  "orderTotal": "Tổng cộng",
+  "removeItem": "Xóa",
+
+  "checkoutTitle": "Thanh Toán",
+  "shippingAddress": "Địa chỉ giao hàng",
+  "paymentMethod": "Phương thức thanh toán",
+  "placeOrder": "Đặt Hàng",
+  "orderSuccess": "Đặt hàng thành công!",
+  "orderSuccessDesc": "Đơn hàng của bạn đã được tạo.",
+  "cod": "Thanh toán khi nhận hàng",
+  "bankTransfer": "Chuyển khoản ngân hàng",
+  "voucher": "Mã giảm giá",
+  "applyVoucher": "Áp dụng",
+
+  "ordersTitle": "Đơn Hàng",
+  "orderTracking": "Theo dõi đơn hàng",
+  "trackOrder": "Theo Dõi",
+  "orderStatus": "Trạng thái",
+  "pending": "Chờ xác nhận",
+  "confirmed": "Đã xác nhận",
+  "processing": "Đang xử lý",
+  "shippingStatus": "Đang giao",
+  "delivered": "Đã giao",
+  "cancelled": "Đã hủy",
+  "noOrders": "Chưa có đơn hàng",
+  "noOrdersDesc": "Đơn hàng sẽ xuất hiện tại đây sau khi bạn đặt hàng",
+
+  "profileTitle": "Hồ Sơ",
+  "editProfile": "Chỉnh sửa hồ sơ",
+  "addresses": "Địa chỉ",
+  "paymentMethods": "Phương thức thanh toán",
+  "notifications": "Thông báo",
+  "messages": "Tin nhắn",
+  "helpSupport": "Trợ giúp & Hỗ trợ",
+  "settings": "Cài đặt",
+  "language": "Ngôn ngữ",
+  "darkMode": "Chế độ tối",
+  "logout": "Đăng xuất",
+  "logoutConfirm": "Bạn có chắc muốn đăng xuất?",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+
+  "sellerDashboard": "Shop của tôi",
+  "sellerProducts": "Sản phẩm",
+  "sellerOrders": "Đơn hàng",
+  "sellerVouchers": "Voucher",
+  "registerSeller": "Đăng ký bán hàng",
+
+  "deliveryDashboard": "Giao hàng",
+  "deliveryShipments": "Đơn giao",
+  "deliveryHistory": "Lịch sử",
+
+  "adminPanel": "Quản trị",
+  "adminUsers": "Người dùng",
+  "adminShops": "Cửa hàng",
+  "adminDrivers": "Nhân viên giao hàng",
+  "adminStats": "Thống kê",
+
+  "chatTitle": "Tin nhắn",
+  "chatEmpty": "Chưa có tin nhắn nào",
+  "chatEmptyDesc": "Bắt đầu chat với người bán từ trang sản phẩm",
+  "chatInputHint": "Nhập tin nhắn...",
+  "startChat": "Bắt đầu trò chuyện!",
+  "online": "Đang hoạt động",
+  "justNow": "Vừa xong",
+
+  "notificationsTitle": "Thông báo",
+  "noNotifications": "Chưa có thông báo",
+  "noNotificationsDesc": "Bạn sẽ nhận thông báo khi có cập nhật đơn hàng",
+  "readAll": "Đọc tất cả",
+  "minutesAgo": "{count} phút trước",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{count} giờ trước",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysAgo": "{count} ngày trước",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "login": "Đăng nhập",
+  "register": "Đăng ký",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "name": "Tên",
+  "phone": "Số điện thoại",
+  "forgotPassword": "Quên mật khẩu?",
+  "dontHaveAccount": "Chưa có tài khoản?",
+  "alreadyHaveAccount": "Đã có tài khoản?",
+
+  "save": "Lưu",
+  "delete": "Xóa",
+  "edit": "Sửa",
+  "add": "Thêm",
+  "close": "Đóng",
+  "back": "Quay lại",
+  "loading": "Đang tải...",
+  "error": "Lỗi",
+  "retry": "Thử lại",
+  "success": "Thành công",
+  "noData": "Không có dữ liệu",
+  "items": "sản phẩm"
+}
