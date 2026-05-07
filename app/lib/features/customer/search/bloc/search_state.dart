@@ -13,6 +13,7 @@ class SearchState extends Equatable {
   final bool hasMore;
   final String sortKey;       // newest, price_asc, price_desc, best_rated
   final String sortLabel;     // display name
+  final List<String> history;
 
   const SearchState({
     this.status = SearchStatus.initial,
@@ -24,6 +25,7 @@ class SearchState extends Equatable {
     this.hasMore = true,
     this.sortKey = 'newest',
     this.sortLabel = 'Mới nhất',
+    this.history = const [],
   });
 
   SearchState copyWith({
@@ -36,6 +38,7 @@ class SearchState extends Equatable {
     bool? hasMore,
     String? sortKey,
     String? sortLabel,
+    List<String>? history,
   }) {
     return SearchState(
       status: status ?? this.status,
@@ -47,10 +50,11 @@ class SearchState extends Equatable {
       hasMore: hasMore ?? this.hasMore,
       sortKey: sortKey ?? this.sortKey,
       sortLabel: sortLabel ?? this.sortLabel,
+      history: history ?? this.history,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, query, results, filters, selectedFilter, totalResults, hasMore, sortKey, sortLabel];
+      [status, query, results, filters, selectedFilter, totalResults, hasMore, sortKey, sortLabel, history];
 }

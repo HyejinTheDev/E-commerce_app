@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../order/domain/entities/order.dart';
@@ -15,6 +16,7 @@ class OrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: SafeArea(
@@ -26,93 +28,113 @@ class OrdersPage extends StatelessWidget {
               );
             }
 
-            return CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  floating: true,
-                  backgroundColor: AppColors.vanillaCream,
-                  elevation: 0,
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    onPressed: () => Navigator.of(context).pop(),
+            return RefreshIndicator(
+              onRefresh: () => _onRefresh(context),
+              color: AppColors.charcoalInk,
+              backgroundColor: AppColors.softWhite,
+              displacement: 40,
+              strokeWidth: 2.5,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    floating: true,
+                    backgroundColor: AppColors.vanillaCream,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    title: Text(l.ordersTitle,
+                        style: AppTextStyles.headlineMedium),
                   ),
-                  title: Text('Đơn Hàng',
-                      style: AppTextStyles.headlineMedium),
-                ),
 
-                // Status Tabs
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: SizedBox(
-                      height: 42,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: state.tabs.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          return PillChip(
-                            label: state.tabs[index],
-                            isSelected: state.selectedTab == index,
-                            onTap: () => context
-                                .read<OrdersBloc>()
-                                .add(OrdersTabChanged(index)),
-                          );
-                        },
+                  // Status Tabs
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: SizedBox(
+                        height: 42,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          itemCount: state.tabs.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
+                          itemBuilder: (context, index) {
+                            return PillChip(
+                              label: state.tabs[index],
+                              isSelected: state.selectedTab == index,
+                              onTap: () => context
+                                  .read<OrdersBloc>()
+                                  .add(OrdersTabChanged(index)),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // Order Cards
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  sliver: state.filteredOrders.isEmpty
-                      ? SliverFillRemaining(
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.receipt_long_outlined,
-                                    size: 48, color: AppColors.stoneGray),
-                                const SizedBox(height: 12),
-                                Text('Chưa có đơn hàng',
-                                    style: AppTextStyles.titleMedium),
-                              ],
+                  // Order Cards
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    sliver: state.filteredOrders.isEmpty
+                        ? SliverFillRemaining(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.receipt_long_outlined,
+                                      size: 48, color: AppColors.stoneGray),
+                                  const SizedBox(height: 12),
+                                  Text(l.noOrders,
+                                      style: AppTextStyles.titleMedium),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final order = state.filteredOrders[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: OrderCard(
+                                    orderId: l.orderIdLabel(order.id.substring(0, 8)),
+                                    date: order.date,
+                                    status: order.statusLabel,
+                                    deliveryEstimate: order.deliveryEstimate,
+                                    totalAmount: order.formattedTotal,
+                                    itemCount: order.itemCount,
+                                    onTap: () => context.push('/orders/${order.id}'),
+                                    onTrack: order.status == OrderStatus.shipping
+                                        ? () => context.push('/orders/${order.id}')
+                                        : null,
+                                  ),
+                                );
+                              },
+                              childCount: state.filteredOrders.length,
                             ),
                           ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final order = state.filteredOrders[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 14),
-                                child: OrderCard(
-                                  orderId: 'Đơn hàng #${order.id.substring(0, 8)}',
-                                  date: order.date,
-                                  status: order.statusLabel,
-                                  deliveryEstimate: order.deliveryEstimate,
-                                  totalAmount: order.formattedTotal,
-                                  itemCount: order.itemCount,
-                                  onTap: () => context.push('/orders/${order.id}'),
-                                  onTrack: order.status == OrderStatus.shipping
-                                      ? () => context.push('/orders/${order.id}')
-                                      : null,
-                                ),
-                              );
-                            },
-                            childCount: state.filteredOrders.length,
-                          ),
-                        ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 100)),
-              ],
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                ],
+              ),
             );
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _onRefresh(BuildContext context) async {
+    final bloc = context.read<OrdersBloc>();
+    bloc.add(const OrdersRefreshed());
+    // Wait for the BLoC to finish processing
+    await bloc.stream.firstWhere(
+      (state) => state.status != OrdersStatus.loading,
+    ).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => bloc.state,
     );
   }
 }

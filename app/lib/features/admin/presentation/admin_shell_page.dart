@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/di/injection.dart';
@@ -68,7 +69,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _loadAll),
           IconButton(
             icon: const Icon(Icons.close_rounded),
-            tooltip: 'Thoát Admin',
+            tooltip: AppLocalizations.of(context)!.exitAdmin,
             onPressed: () => context.go('/profile'),
           ),
         ],
@@ -85,11 +86,11 @@ class _AdminShellPageState extends State<AdminShellPage> {
         indicatorColor: const Color(0xFF1A1A2E).withValues(alpha: 0.12),
         height: 65,
         onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Tổng quan'),
-          NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Users'),
-          NavigationDestination(icon: Icon(Icons.store_outlined), selectedIcon: Icon(Icons.store), label: 'Shops'),
-          NavigationDestination(icon: Icon(Icons.delivery_dining_outlined), selectedIcon: Icon(Icons.delivery_dining), label: 'Drivers'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.dashboard_outlined), selectedIcon: const Icon(Icons.dashboard), label: AppLocalizations.of(context)!.sellerOverview),
+          NavigationDestination(icon: const Icon(Icons.people_outline), selectedIcon: const Icon(Icons.people), label: AppLocalizations.of(context)!.adminUsersLabel),
+          NavigationDestination(icon: const Icon(Icons.store_outlined), selectedIcon: const Icon(Icons.store), label: AppLocalizations.of(context)!.adminShopsLabel),
+          NavigationDestination(icon: const Icon(Icons.delivery_dining_outlined), selectedIcon: const Icon(Icons.delivery_dining), label: AppLocalizations.of(context)!.adminDriversLabel),
         ],
       ),
     );
@@ -112,7 +113,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Tổng doanh thu', style: TextStyle(color: Colors.white60, fontSize: 13)),
+                Text(AppLocalizations.of(context)!.adminTotalRevenue, style: const TextStyle(color: Colors.white60, fontSize: 13)),
                 const SizedBox(height: 8),
                 Text(
                   CurrencyFormatter.formatVnd((_stats['totalRevenue'] as num?)?.toDouble() ?? 0),
@@ -131,16 +132,16 @@ class _AdminShellPageState extends State<AdminShellPage> {
             crossAxisSpacing: 12,
             childAspectRatio: 1.6,
             children: [
-              _statCard('Người dùng', _stats['totalUsers'] ?? 0, Icons.people_rounded, const Color(0xFF5C6BC0)),
-              _statCard('Đơn hàng', _stats['totalOrders'] ?? 0, Icons.receipt_long_rounded, const Color(0xFF26A69A)),
-              _statCard('Sản phẩm', _stats['totalProducts'] ?? 0, Icons.inventory_2_rounded, const Color(0xFFFFA726)),
-              _statCard('Cửa hàng', _stats['totalShops'] ?? 0, Icons.store_rounded, const Color(0xFFEF5350)),
-              _statCard('Tài xế', _stats['totalDrivers'] ?? 0, Icons.delivery_dining_rounded, const Color(0xFF42A5F5)),
-              _statCard('Chờ duyệt', _stats['pendingShops'] ?? 0, Icons.pending_actions_rounded, const Color(0xFFFF7043)),
+              _statCard(AppLocalizations.of(context)!.adminUsersLabel, _stats['totalUsers'] ?? 0, Icons.people_rounded, const Color(0xFF5C6BC0)),
+              _statCard(AppLocalizations.of(context)!.adminOrdersLabel, _stats['totalOrders'] ?? 0, Icons.receipt_long_rounded, const Color(0xFF26A69A)),
+              _statCard(AppLocalizations.of(context)!.adminProductsLabel, _stats['totalProducts'] ?? 0, Icons.inventory_2_rounded, const Color(0xFFFFA726)),
+              _statCard(AppLocalizations.of(context)!.adminShopsLabel, _stats['totalShops'] ?? 0, Icons.store_rounded, const Color(0xFFEF5350)),
+              _statCard(AppLocalizations.of(context)!.adminDriversLabel, _stats['totalDrivers'] ?? 0, Icons.delivery_dining_rounded, const Color(0xFF42A5F5)),
+              _statCard(AppLocalizations.of(context)!.adminPendingLabel, _stats['pendingShops'] ?? 0, Icons.pending_actions_rounded, const Color(0xFFFF7043)),
             ],
           ),
           const SizedBox(height: 24),
-          Text('Trạng thái đơn hàng', style: AppTextStyles.titleMedium),
+          Text(AppLocalizations.of(context)!.adminOrderStatus, style: AppTextStyles.titleMedium),
           const SizedBox(height: 12),
           ...(_buildOrderStatusBars()),
         ],
@@ -152,12 +153,12 @@ class _AdminShellPageState extends State<AdminShellPage> {
     final ordersByStatus = (_stats['ordersByStatus'] as Map<String, dynamic>?) ?? {};
     final total = (_stats['totalOrders'] as int?) ?? 1;
     final statusNames = {
-      'PENDING': ('Chờ xử lý', const Color(0xFFFFA726)),
-      'CONFIRMED': ('Đã xác nhận', const Color(0xFF42A5F5)),
-      'PROCESSING': ('Đang xử lý', const Color(0xFF5C6BC0)),
-      'SHIPPING': ('Đang giao', const Color(0xFF26A69A)),
-      'DELIVERED': ('Đã giao', const Color(0xFF66BB6A)),
-      'CANCELLED': ('Đã hủy', const Color(0xFFEF5350)),
+      'PENDING': (AppLocalizations.of(context)!.statusPending, const Color(0xFFFFA726)),
+      'CONFIRMED': (AppLocalizations.of(context)!.statusConfirmed, const Color(0xFF42A5F5)),
+      'PROCESSING': (AppLocalizations.of(context)!.statusProcessing, const Color(0xFF5C6BC0)),
+      'SHIPPING': (AppLocalizations.of(context)!.statusShipping, const Color(0xFF26A69A)),
+      'DELIVERED': (AppLocalizations.of(context)!.statusDelivered, const Color(0xFF66BB6A)),
+      'CANCELLED': (AppLocalizations.of(context)!.statusCancelled, const Color(0xFFEF5350)),
     };
     return statusNames.entries.map((entry) {
       final count = ordersByStatus[entry.key] ?? 0;
@@ -222,7 +223,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
           if (index == 0) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Text('Quản lý người dùng (${_users.length})', style: AppTextStyles.titleLarge),
+              child: Text(AppLocalizations.of(context)!.manageUsers(_users.length), style: AppTextStyles.titleLarge),
             );
           }
           final user = _users[index - 1] as Map<String, dynamic>;
@@ -289,7 +290,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
           if (index == 0) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Text('Quản lý cửa hàng (${_shops.length})', style: AppTextStyles.titleLarge),
+              child: Text(AppLocalizations.of(context)!.manageShops(_shops.length), style: AppTextStyles.titleLarge),
             );
           }
           final shop = _shops[index - 1] as Map<String, dynamic>;
@@ -333,7 +334,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
                         child: OutlinedButton(
                           onPressed: () => _approveShop(shop['id'], 'REJECTED'),
                           style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)),
-                          child: const Text('Từ chối'),
+                          child: Text(AppLocalizations.of(context)!.rejectShopAction),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -344,7 +345,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
                             backgroundColor: const Color(0xFF66BB6A),
                             foregroundColor: Colors.white, elevation: 0,
                           ),
-                          child: const Text('Duyệt'),
+                          child: Text(AppLocalizations.of(context)!.approveAction),
                         ),
                       ),
                     ],
@@ -363,12 +364,12 @@ class _AdminShellPageState extends State<AdminShellPage> {
       await getIt<DioClient>().dio.patch('/admin/shops/$shopId/approve', data: {'status': status});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(status == 'APPROVED' ? 'Đã duyệt cửa hàng!' : 'Đã từ chối cửa hàng!')),
+          SnackBar(content: Text(status == 'APPROVED' ? AppLocalizations.of(context)!.shopApproved : AppLocalizations.of(context)!.shopRejected)),
         );
         _loadAll();
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorLabel(e.toString()))));
     }
   }
 
@@ -383,7 +384,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
           if (index == 0) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Text('Quản lý tài xế (${_drivers.length})', style: AppTextStyles.titleLarge),
+              child: Text(AppLocalizations.of(context)!.manageDrivers(_drivers.length), style: AppTextStyles.titleLarge),
             );
           }
           final driver = _drivers[index - 1] as Map<String, dynamic>;
@@ -410,7 +411,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(user?['name'] ?? '', style: AppTextStyles.titleSmall),
-                      Text('${driver['vehicleType'] ?? ''} · $shipmentCount đơn',
+                      Text('${driver['vehicleType'] ?? ''} · ${AppLocalizations.of(context)!.nShipments(shipmentCount as int)}',
                           style: AppTextStyles.bodySmall.copyWith(color: AppColors.stoneGray)),
                     ],
                   ),
@@ -433,7 +434,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
       await getIt<DioClient>().dio.patch('/admin/drivers/$driverId/availability', data: {'isAvailable': isAvailable});
       _loadAll();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorLabel(e.toString()))));
     }
   }
 }

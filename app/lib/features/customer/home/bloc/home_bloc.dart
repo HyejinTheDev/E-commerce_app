@@ -8,6 +8,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc(this._productRepository) : super(const HomeState()) {
     on<HomeLoaded>(_onLoaded);
+    on<HomeRefreshed>(_onRefreshed);
     on<HomeCategorySelected>(_onCategorySelected);
   }
 
@@ -32,6 +33,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         status: HomeStatus.error,
         errorMessage: 'Failed to load products: $e',
       ));
+    }
+  }
+
+  /// Pull-to-refresh — reload data without showing the loading skeleton
+  Future<void> _onRefreshed(
+      HomeRefreshed event, Emitter<HomeState> emit) async {
+    try {
+      final response = await _productRepository.getProducts(limit: 10);
+      final categoryNames = <String>{'All'};
+      for (final p in response.products) {
+        if (p.category.isNotEmpty) categoryNames.add(p.category);
+      }
+
+      emit(state.copyWith(
+        status: HomeStatus.loaded,
+        featuredProducts: response.products,
+        categories: categoryNames.toList(),
+        selectedCategory: 0,
+      ));
+    } catch (_) {
+      // Keep current data on refresh error — user still sees existing content
     }
   }
 

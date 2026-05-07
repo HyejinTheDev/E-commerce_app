@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/di/injection.dart';
@@ -8,12 +12,14 @@ class EditProfilePage extends StatefulWidget {
   final String name;
   final String email;
   final String? phone;
+  final String? avatar;
 
   const EditProfilePage({
     super.key,
     required this.name,
     required this.email,
     this.phone,
+    this.avatar,
   });
 
   @override
@@ -24,12 +30,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _phoneCtrl;
   bool _isSaving = false;
+  bool _isUploading = false;
+  String? _avatarUrl;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     _nameCtrl = TextEditingController(text: widget.name);
     _phoneCtrl = TextEditingController(text: widget.phone ?? '');
+    _avatarUrl = widget.avatar;
   }
 
   @override
@@ -39,10 +49,60 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
+  Future<void> _pickAndUploadImage() async {
+    try {
+      final pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 800,
+      );
+      
+      if (pickedFile == null) return;
+      
+      setState(() => _isUploading = true);
+      
+      final dio = getIt<DioClient>().dio;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          pickedFile.path,
+          filename: pickedFile.path.split('/').last,
+        ),
+      });
+      
+      final response = await dio.post('/upload/image', data: formData);
+      final url = response.data['url'] as String;
+      
+      setState(() {
+        _avatarUrl = url;
+        _isUploading = false;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tải ảnh lên thành công! Vui lòng lưu thay đổi.'),
+            backgroundColor: const Color(0xFF4CAF50),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isUploading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tải ảnh thất bại: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _save() async {
+    final l = AppLocalizations.of(context)!;
     if (_nameCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tên không được để trống')),
+        SnackBar(content: Text(l.nameRequired)),
       );
       return;
     }
@@ -54,13 +114,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'name': _nameCtrl.text.trim(),
         if (_phoneCtrl.text.trim().isNotEmpty)
           'phone': _phoneCtrl.text.trim(),
+        if (_avatarUrl != null) 'avatar': _avatarUrl,
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Cập nhật thành công!'),
-            backgroundColor: Color(0xFF4CAF50),
+          SnackBar(
+            content: Text(l.updateSuccess),
+            backgroundColor: const Color(0xFF4CAF50),
           ),
         );
         Navigator.pop(context, true); // return true to refresh
@@ -68,7 +129,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l.errorLabel(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -77,10 +138,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       appBar: AppBar(
-        title: const Text('Sửa hồ sơ'),
+        title: Text(l.editProfileTitle),
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.charcoalInk,
         elevation: 0,
@@ -92,34 +154,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
           children: [
             // Avatar
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: AppColors.pearlMist,
-                    child: Icon(Icons.person_outline_rounded,
-                        size: 50, color: AppColors.charcoalInk),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.charcoalInk,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.vanillaCream, width: 2),
-                      ),
-                      child: const Icon(Icons.camera_alt_outlined,
-                          size: 16, color: Colors.white),
+              child: GestureDetector(
+                onTap: _isUploading ? null : _pickAndUploadImage,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.pearlMist,
+                      backgroundImage: _avatarUrl != null && _avatarUrl!.isNotEmpty ? NetworkImage(_avatarUrl!) : null,
+                      child: _avatarUrl == null || _avatarUrl!.isEmpty
+                          ? Icon(Icons.person_outline_rounded, size: 50, color: AppColors.charcoalInk)
+                          : null,
                     ),
-                  ),
-                ],
+                    if (_isUploading)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.black45,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24, height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.charcoalInk,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.vanillaCream, width: 2),
+                        ),
+                        child: const Icon(Icons.camera_alt_outlined,
+                            size: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 32),
 
-            Text('Họ và tên', style: AppTextStyles.labelMedium
+            Text(l.editProfileFullName, style: AppTextStyles.labelMedium
                 .copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             _buildField(_nameCtrl, 'Nguyễn Văn A', Icons.person_outline),
@@ -148,7 +230,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 20),
 
-            Text('Số điện thoại', style: AppTextStyles.labelMedium
+            Text(l.phoneLabel, style: AppTextStyles.labelMedium
                 .copyWith(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             _buildField(_phoneCtrl, '0123456789', Icons.phone_outlined),
@@ -170,7 +252,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ? SizedBox(width: 24, height: 24,
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: AppColors.vanillaCream))
-                    : Text('Lưu thay đổi',
+                    : Text(l.saveChanges,
                         style: AppTextStyles.button
                             .copyWith(color: AppColors.vanillaCream)),
               ),

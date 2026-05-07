@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/cart_item_card.dart';
@@ -14,6 +15,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: BlocBuilder<CartBloc, CartState>(
@@ -27,14 +29,14 @@ class CartPage extends StatelessWidget {
                     Icon(Icons.shopping_bag_outlined,
                         size: 64, color: AppColors.stoneGray),
                     const SizedBox(height: 16),
-                    Text('Giỏ hàng trống',
+                    Text(l.cartEmpty,
                         style: AppTextStyles.titleLarge),
                     const SizedBox(height: 8),
-                    Text('Duyệt sản phẩm và thêm vào giỏ',
+                    Text(l.browseAndAdd,
                         style: AppTextStyles.bodyMedium),
                     const SizedBox(height: 24),
                     PillButton(
-                      label: 'Mua Sắm Ngay',
+                      label: l.shopNowBtn,
                       onPressed: () => context.go('/home'),
                     ),
                   ],
@@ -52,13 +54,13 @@ class CartPage extends StatelessWidget {
                       floating: true,
                       backgroundColor: AppColors.vanillaCream,
                       elevation: 0,
-                      title: Text('Giỏ Hàng',
+                      title: Text(l.cartTitle,
                           style: AppTextStyles.headlineMedium),
                       actions: [
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
-                            child: Text('${state.itemCount} sản phẩm',
+                            child: Text(l.nItems(state.itemCount),
                                 style: AppTextStyles.bodySmall),
                           ),
                         ),
@@ -121,22 +123,22 @@ class CartPage extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              _SummaryRow('Tạm tính', state.formattedSubtotal),
+                              _SummaryRow(l.subtotal, state.formattedSubtotal),
                               if (state.appliedVoucher != null) ...[
                                 const SizedBox(height: 10),
                                 _SummaryRow(
-                                  'Giảm giá (${state.appliedVoucher!.code})',
+                                  l.discountLabel(state.appliedVoucher!.code),
                                   state.formattedDiscount,
                                   valueColor: AppColors.sageGreen,
                                 ),
                               ],
                               const SizedBox(height: 10),
-                              _SummaryRow('Vận chuyển', state.formattedShipping,
+                              _SummaryRow(l.shipping, state.formattedShipping,
                                   valueColor: state.shipping == 0
                                       ? AppColors.sageGreen
                                       : null),
                               const SizedBox(height: 10),
-                              _SummaryRow('Thuế', state.formattedTax),
+                              _SummaryRow(l.tax, state.formattedTax),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14),
@@ -147,7 +149,7 @@ class CartPage extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Tổng cộng',
+                                  Text(l.orderTotal,
                                       style: AppTextStyles.titleMedium),
                                   Text(state.formattedTotal,
                                       style: AppTextStyles.priceLarge),
@@ -177,7 +179,7 @@ class CartPage extends StatelessWidget {
                 child: SafeArea(
                   top: false,
                   child: PillButton(
-                    label: 'Tiến Hành Thanh Toán',
+                    label: l.proceedToCheckout,
                     isFullWidth: true,
                     onPressed: () => context.push('/checkout'),
                   ),
@@ -230,6 +232,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final hasVoucher = widget.state.appliedVoucher != null;
 
     return Container(
@@ -253,7 +256,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
               Icon(Icons.local_offer_outlined,
                   size: 18, color: AppColors.warmSand),
               const SizedBox(width: 8),
-              Text('Mã giảm giá', style: AppTextStyles.titleSmall),
+              Text(l.voucherCode, style: AppTextStyles.titleSmall),
             ],
           ),
           const SizedBox(height: 12),
@@ -274,7 +277,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${widget.state.appliedVoucher!.code} — Giảm ${widget.state.appliedVoucher!.discount.toStringAsFixed(0)}%',
+                      '${widget.state.appliedVoucher!.code} — ${widget.state.appliedVoucher!.discount.toStringAsFixed(0)}%',
                       style: AppTextStyles.titleSmall
                           .copyWith(color: AppColors.sageGreen),
                     ),
@@ -284,7 +287,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
                       context.read<CartBloc>().add(const VoucherRemoved());
                       _controller.clear();
                     },
-                    child: Text('Xóa',
+                    child: Text(l.removeItem,
                         style: AppTextStyles.bodySmall
                             .copyWith(color: AppColors.terracottaBlush)),
                   ),
@@ -300,7 +303,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
                     controller: _controller,
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
-                      hintText: 'Nhập mã giảm giá',
+                      hintText: l.voucherHint,
                       hintStyle: AppTextStyles.bodyMedium
                           .copyWith(color: AppColors.stoneGray),
                       contentPadding: const EdgeInsets.symmetric(
@@ -343,7 +346,7 @@ class _VoucherSectionState extends State<_VoucherSection> {
                               color: AppColors.softWhite,
                             ),
                           )
-                        : Text('Áp dụng',
+                        : Text(l.applyVoucher,
                             style: AppTextStyles.titleSmall
                                 .copyWith(color: AppColors.softWhite)),
                   ),

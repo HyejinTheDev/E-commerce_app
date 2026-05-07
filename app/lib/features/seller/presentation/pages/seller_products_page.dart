@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../bloc/seller_bloc.dart';
 import '../../bloc/seller_event.dart';
 import '../../bloc/seller_state.dart';
+import 'add_product_page.dart';
 
 class SellerProductsPage extends StatelessWidget {
   const SellerProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<SellerBloc>(),
+                child: const AddProductPage(),
+              ),
+            ),
+          );
+        },
+        backgroundColor: AppColors.charcoalInk,
+        child: Icon(Icons.add, color: AppColors.vanillaCream),
+      ),
       body: SafeArea(
         child: BlocBuilder<SellerBloc, SellerState>(
           builder: (context, state) {
@@ -26,28 +44,28 @@ class SellerProductsPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: Row(
                     children: [
-                      Text('Sản phẩm', style: AppTextStyles.displayLarge.copyWith(fontSize: 28)),
+                      Text(l.productsLabel,
+                          style: AppTextStyles.displayLarge
+                              .copyWith(fontSize: 28)),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: AppColors.pearlMist,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text('${state.products.length} sp',
-                            style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
+                        child: Text(l.nProductsShort(state.products.length),
+                            style: AppTextStyles.bodySmall
+                                .copyWith(fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Product list
                 Expanded(
                   child: state.products.isEmpty
                       ? Center(
@@ -55,108 +73,50 @@ class SellerProductsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.inventory_2_outlined,
-                                  size: 64, color: AppColors.stoneGray.withValues(alpha: 0.4)),
+                                  size: 64,
+                                  color:
+                                      AppColors.stoneGray.withValues(alpha: 0.4)),
                               const SizedBox(height: 16),
-                              Text('Chưa có sản phẩm nào',
-                                  style: AppTextStyles.titleSmall.copyWith(color: AppColors.stoneGray)),
-                              const SizedBox(height: 4),
-                              Text('Thêm sản phẩm đầu tiên của bạn',
-                                  style: AppTextStyles.bodySmall),
+                              Text(l.noProducts,
+                                  style: AppTextStyles.titleSmall
+                                      .copyWith(color: AppColors.stoneGray)),
+                              const SizedBox(height: 8),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                        value: context.read<SellerBloc>(),
+                                        child: const AddProductPage(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(l.addFirstProduct),
+                              ),
                             ],
                           ),
                         )
-                      : ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                          itemCount: state.products.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final product = state.products[index];
-                            final images = (product['images'] as List<dynamic>?) ?? [];
-                            final imageUrl = images.isNotEmpty ? images.first as String : '';
-                            final price = double.tryParse(product['price']?.toString() ?? '0') ?? 0;
-                            final stock = product['stock'] as int? ?? 0;
-
-                            return Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.softWhite,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.pearlMist),
-                              ),
-                              child: Row(
-                                children: [
-                                  // Image
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: imageUrl.isNotEmpty
-                                        ? Image.network(imageUrl,
-                                            width: 70, height: 70, fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) =>
-                                                _placeholder())
-                                        : _placeholder(),
-                                  ),
-                                  const SizedBox(width: 14),
-                                  // Info
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(product['name'] as String? ?? '',
-                                            style: AppTextStyles.titleSmall,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis),
-                                        const SizedBox(height: 4),
-                                        Text(CurrencyFormatter.formatVnd(price),
-                                            style: AppTextStyles.bodySmall.copyWith(
-                                                fontWeight: FontWeight.w600)),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.inventory_outlined,
-                                                size: 13, color: stock > 0 ? AppColors.stoneGray : Colors.red),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              stock > 0 ? 'Kho: $stock' : 'Hết hàng',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: stock > 0 ? AppColors.stoneGray : Colors.red,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Actions
-                                  PopupMenuButton<String>(
-                                    icon: Icon(Icons.more_vert_rounded,
-                                        color: AppColors.stoneGray, size: 20),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12)),
-                                    color: AppColors.softWhite,
-                                    onSelected: (value) {
-                                      if (value == 'delete') {
-                                        _confirmDelete(context, product['id'] as String);
-                                      }
-                                    },
-                                    itemBuilder: (_) => [
-                                      const PopupMenuItem(
-                                        value: 'delete',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                                            SizedBox(width: 8),
-                                            Text('Xóa', style: TextStyle(color: Colors.red)),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
+                      : RefreshIndicator(
+                          color: AppColors.charcoalInk,
+                          onRefresh: () async {
+                            context
+                                .read<SellerBloc>()
+                                .add(const SellerProductsLoaded());
+                            await Future.delayed(
+                                const Duration(milliseconds: 500));
                           },
+                          child: ListView.separated(
+                            padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                            itemCount: state.products.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final product = state.products[index];
+                              return _ProductCard(product: product);
+                            },
+                          ),
                         ),
                 ),
               ],
@@ -166,40 +126,127 @@ class SellerProductsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ProductCard extends StatelessWidget {
+  final Map<String, dynamic> product;
+
+  const _ProductCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final images = (product['images'] as List<dynamic>?) ?? [];
+    final name = product['name'] as String? ?? '';
+    final price = double.tryParse(product['price']?.toString() ?? '0') ?? 0;
+    final stock = product['stock'] as int? ?? 0;
+    final productId = product['id'] as String? ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.softWhite,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.pearlMist),
+      ),
+      child: Row(
+        children: [
+          // Thumbnail
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: images.isNotEmpty
+                ? Image.network(images.first as String,
+                    width: 80, height: 80, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        _placeholder())
+                : _placeholder(),
+          ),
+          const SizedBox(width: 14),
+          // Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name,
+                    style: AppTextStyles.titleSmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
+                Text(CurrencyFormatter.formatVnd(price),
+                    style: AppTextStyles.bodySmall
+                        .copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: stock > 0
+                            ? const Color(0xFF4CAF50).withValues(alpha: 0.1)
+                            : const Color(0xFFEF5350).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        l.stock2(stock),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: stock > 0
+                              ? const Color(0xFF4CAF50)
+                              : const Color(0xFFEF5350),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Delete
+          IconButton(
+            icon: Icon(Icons.delete_outline,
+                color: AppColors.stoneGray, size: 20),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: Text(l.deleteProduct),
+                  content: Text(l.deleteProductConfirm),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l.cancel),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        context
+                            .read<SellerBloc>()
+                            .add(SellerProductDeleted(productId));
+                      },
+                      child: Text(l.deleteAction,
+                          style: const TextStyle(color: Colors.red)),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _placeholder() {
     return Container(
-      width: 70,
-      height: 70,
+      width: 80,
+      height: 80,
       decoration: BoxDecoration(
         color: AppColors.pearlMist,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(Icons.image_outlined, color: AppColors.stoneGray),
-    );
-  }
-
-  void _confirmDelete(BuildContext context, String productId) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Xóa sản phẩm?'),
-        content: const Text('Sản phẩm sẽ bị xóa vĩnh viễn.'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<SellerBloc>().add(SellerProductDeleted(productId));
-              Navigator.pop(context);
-            },
-            child: const Text('Xóa', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
   }
 }

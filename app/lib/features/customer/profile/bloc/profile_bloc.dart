@@ -19,6 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(ProfileState(
         name: user.name,
         email: user.email,
+        avatar: user.avatar,
         orderCount: user.orderCount,
         addressCount: user.addressCount,
         darkMode: themeNotifier.isDarkMode,

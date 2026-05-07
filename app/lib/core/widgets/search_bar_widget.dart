@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 /// Pill-shaped search bar with magnifying glass icon
 class LucentSearchBar extends StatelessWidget {
-  final String hint;
+  final String? hint;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
   final TextEditingController? controller;
@@ -11,7 +12,7 @@ class LucentSearchBar extends StatelessWidget {
 
   const LucentSearchBar({
     super.key,
-    this.hint = 'Tìm kiếm sản phẩm...',
+    this.hint,
     this.onTap,
     this.onChanged,
     this.controller,
@@ -20,6 +21,7 @@ class LucentSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final defaultHint = AppLocalizations.of(context)?.searchProducts ?? 'Tìm kiếm sản phẩm...';
     return GestureDetector(
       onTap: readOnly ? onTap : null,
       child: Container(
@@ -39,7 +41,7 @@ class LucentSearchBar extends StatelessWidget {
             Expanded(
               child: readOnly
                   ? Text(
-                      hint,
+                      hint ?? defaultHint,
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.stoneGray,
@@ -53,7 +55,7 @@ class LucentSearchBar extends StatelessWidget {
                         color: AppColors.charcoalInk,
                       ),
                       decoration: InputDecoration(
-                        hintText: hint,
+                        hintText: hint ?? defaultHint,
                         hintStyle: TextStyle(
                           fontSize: 14,
                           color: AppColors.stoneGray,

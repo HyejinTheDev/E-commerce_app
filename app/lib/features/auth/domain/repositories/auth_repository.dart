@@ -17,4 +17,13 @@ abstract class AuthRepository {
   Future<bool> isLoggedIn();
   Future<String?> getAccessToken();
   Future<String?> getSavedRole();
+
+  // ─── Remember Me ───
+  Future<void> saveCredentials(String email, String password);
+  Future<void> clearCredentials();
+  Future<Map<String, String>?> getSavedCredentials();
+  Future<bool> isRememberMeEnabled();
+
+  // ─── Forgot Password ───
+  Future<void> forgotPassword(String email);
 }

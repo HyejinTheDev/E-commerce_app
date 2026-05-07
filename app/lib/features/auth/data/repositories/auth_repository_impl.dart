@@ -62,4 +62,31 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<String?> getSavedRole() async {
     return _remoteDataSource.getSavedRole();
   }
+
+  // ─── Remember Me ───
+
+  @override
+  Future<void> saveCredentials(String email, String password) async {
+    await _remoteDataSource.saveCredentials(email, password);
+  }
+
+  @override
+  Future<void> clearCredentials() async {
+    await _remoteDataSource.clearCredentials();
+  }
+
+  @override
+  Future<Map<String, String>?> getSavedCredentials() async {
+    return _remoteDataSource.getSavedCredentials();
+  }
+
+  @override
+  Future<bool> isRememberMeEnabled() async {
+    return _remoteDataSource.isRememberMeEnabled();
+  }
+
+  @override
+  Future<void> forgotPassword(String email) async {
+    await _remoteDataSource.forgotPassword(email);
+  }
 }

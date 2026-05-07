@@ -45,6 +45,9 @@ import '../../features/voucher/domain/usecases/validate_voucher_usecase.dart';
 // ─── Seller ───
 import '../../features/seller/data/datasources/seller_remote_datasource.dart';
 
+// ─── Search ───
+import '../../features/customer/search/domain/repositories/search_history_repository.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
@@ -56,47 +59,51 @@ Future<void> configureDependencies() async {
       () => AuthRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()));
-  getIt.registerLazySingleton(() => LoginUseCase(getIt<AuthRepository>()));
-  getIt.registerLazySingleton(() => RegisterUseCase(getIt<AuthRepository>()));
-  getIt.registerLazySingleton(() => LogoutUseCase(getIt<AuthRepository>()));
-  getIt.registerLazySingleton(() => CheckAuthUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(() => LoginUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(() => RegisterUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(() => LogoutUseCase(getIt<AuthRepository>()));
+  getIt.registerFactory(() => CheckAuthUseCase(getIt<AuthRepository>()));
 
   // ─── Product ───
   getIt.registerLazySingleton<ProductRemoteDataSource>(
       () => ProductRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<ProductRepository>(
       () => ProductRepositoryImpl(getIt<ProductRemoteDataSource>()));
-  getIt.registerLazySingleton(() => GetProductsUseCase(getIt<ProductRepository>()));
-  getIt.registerLazySingleton(() => GetProductByIdUseCase(getIt<ProductRepository>()));
+  getIt.registerFactory(() => GetProductsUseCase(getIt<ProductRepository>()));
+  getIt.registerFactory(() => GetProductByIdUseCase(getIt<ProductRepository>()));
 
   // ─── Category ───
   getIt.registerLazySingleton<CategoryRemoteDataSource>(
       () => CategoryRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<CategoryRepository>(
       () => CategoryRepositoryImpl(getIt<CategoryRemoteDataSource>()));
-  getIt.registerLazySingleton(() => GetCategoriesUseCase(getIt<CategoryRepository>()));
+  getIt.registerFactory(() => GetCategoriesUseCase(getIt<CategoryRepository>()));
 
   // ─── Order ───
   getIt.registerLazySingleton<OrderRemoteDataSource>(
       () => OrderRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<OrderRepository>(
       () => OrderRepositoryImpl(getIt<OrderRemoteDataSource>()));
-  getIt.registerLazySingleton(() => GetMyOrdersUseCase(getIt<OrderRepository>()));
-  getIt.registerLazySingleton(() => CreateOrderUseCase(getIt<OrderRepository>()));
+  getIt.registerFactory(() => GetMyOrdersUseCase(getIt<OrderRepository>()));
+  getIt.registerFactory(() => CreateOrderUseCase(getIt<OrderRepository>()));
 
   // ─── Profile ───
   getIt.registerLazySingleton<UserRemoteDataSource>(
       () => UserRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<UserRepository>(
       () => UserRepositoryImpl(getIt<UserRemoteDataSource>()));
-  getIt.registerLazySingleton(() => GetProfileUseCase(getIt<UserRepository>()));
+  getIt.registerFactory(() => GetProfileUseCase(getIt<UserRepository>()));
 
   // ─── Voucher ───
   getIt.registerLazySingleton<VoucherRemoteDataSource>(
       () => VoucherRemoteDataSource(getIt<DioClient>()));
   getIt.registerLazySingleton<VoucherRepository>(
       () => VoucherRepositoryImpl(getIt<VoucherRemoteDataSource>()));
-  getIt.registerLazySingleton(() => ValidateVoucherUseCase(getIt<VoucherRepository>()));
+  getIt.registerFactory(() => ValidateVoucherUseCase(getIt<VoucherRepository>()));
+
+  // ─── Search ───
+  getIt.registerLazySingleton<SearchHistoryRepository>(
+      () => SearchHistoryRepositoryImpl());
 
   // ─── Seller ───
   getIt.registerLazySingleton<SellerRemoteDataSource>(

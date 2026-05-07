@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/order/domain/repositories/order_repository.dart';
+import '../../../../core/utils/error_mapper.dart';
 import 'checkout_event.dart';
 import 'checkout_state.dart';
 
@@ -39,7 +40,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     } catch (e) {
       emit(state.copyWith(
         status: CheckoutStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }

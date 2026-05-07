@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/di/injection.dart';
 import '../../bloc/auth_bloc.dart';
 import '../../bloc/auth_event.dart';
 import '../../bloc/auth_state.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,6 +21,33 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberMe = false;
+  bool _isLoadingCredentials = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    try {
+      final repo = getIt<AuthRepository>();
+      final credentials = await repo.getSavedCredentials();
+      if (credentials != null && mounted) {
+        _emailController.text = credentials['email'] ?? '';
+        _passwordController.text = credentials['password'] ?? '';
+        setState(() {
+          _rememberMe = true;
+          _isLoadingCredentials = false;
+        });
+      } else {
+        if (mounted) setState(() => _isLoadingCredentials = false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoadingCredentials = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -28,14 +58,17 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
+          // Save or clear credentials based on toggle
+          _handleRememberMe();
           context.go('/home');
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Đăng nhập thất bại'),
+              content: Text(state.errorMessage ?? l.loginFailed),
               backgroundColor: AppColors.terracottaBlush,
             ),
           );
@@ -57,18 +90,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
                 // Header
-                Text('Chào Mừng\nTrở Lại', style: AppTextStyles.displayLarge.copyWith(
+                Text(l.welcomeBack, style: AppTextStyles.displayLarge.copyWith(
                   fontSize: 36,
                   height: 1.2,
                 )),
                 const SizedBox(height: 8),
                 Text(
-                  'Đăng nhập để tiếp tục mua sắm',
+                  l.loginSubtitle,
                   style: AppTextStyles.bodyLarge,
                 ),
                 const SizedBox(height: 48),
                 // Email field
-                _buildLabel('Email'),
+                _buildLabel(l.email),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _emailController,
@@ -78,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 // Password field
-                _buildLabel('Mật khẩu'),
+                _buildLabel(l.password),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _passwordController,
@@ -94,7 +127,69 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
+
+                // ─── Remember Me & Forgot Password ───
+                Row(
+                  children: [
+                    // Remember Me toggle
+                    GestureDetector(
+                      onTap: () => setState(() => _rememberMe = !_rememberMe),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: _rememberMe
+                                  ? AppColors.charcoalInk
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: _rememberMe
+                                    ? AppColors.charcoalInk
+                                    : AppColors.warmSand,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: _rememberMe
+                                ? Icon(Icons.check,
+                                    size: 15,
+                                    color: AppColors.vanillaCream)
+                                : null,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            l.rememberMe,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.charcoalInk,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    // Forgot Password
+                    GestureDetector(
+                      onTap: () {
+                        context.push('/forgot-password');
+                      },
+                      child: Text(
+                        l.forgotPassword,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.terracottaBlush,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 32),
                 // Login button
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -121,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                                   color: AppColors.vanillaCream,
                                 ),
                               )
-                            : Text('Đăng Nhập', style: AppTextStyles.button.copyWith(
+                            : Text(l.loginBtn, style: AppTextStyles.button.copyWith(
                                 color: AppColors.vanillaCream,
                               )),
                       ),
@@ -135,11 +230,11 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () => context.go('/register'),
                     child: RichText(
                       text: TextSpan(
-                        text: 'Chưa có tài khoản? ',
+                        text: '${l.dontHaveAccount} ',
                         style: AppTextStyles.bodyMedium,
                         children: [
                           TextSpan(
-                            text: 'Đăng Ký',
+                            text: l.registerBtn,
                             style: AppTextStyles.titleSmall.copyWith(
                               color: AppColors.terracottaBlush,
                             ),
@@ -197,16 +292,34 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onLogin() {
+    final l = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
+        SnackBar(content: Text(l.fillAllFields)),
       );
       return;
     }
 
     context.read<AuthBloc>().add(AuthLoginRequested(email, password));
+  }
+
+  /// Save or clear credentials after successful login
+  Future<void> _handleRememberMe() async {
+    try {
+      final repo = getIt<AuthRepository>();
+      if (_rememberMe) {
+        await repo.saveCredentials(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
+      } else {
+        await repo.clearCredentials();
+      }
+    } catch (_) {
+      // Silently ignore storage errors
+    }
   }
 }

@@ -16,577 +16,7 @@ import 'address_page.dart';
 import 'edit_profile_page.dart';
 import '../../../../../main.dart' show themeNotifier;
 
-void _onSellerCenterTap(BuildContext context) async {
-  // Show loading indicator
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    useRootNavigator: true,
-    builder: (_) => const Center(child: CircularProgressIndicator()),
-  );
-
-  try {
-    final dio = getIt<DioClient>().dio;
-    final response = await dio.get('/seller/status');
-    final data = response.data;
-
-    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
-
-    if (data['isSeller'] == true && context.mounted) {
-      context.push('/seller');
-    } else if (context.mounted) {
-      _showSellerRegistrationDialog(context);
-    }
-  } catch (e) {
-    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
-
-    final isAuthError = e.toString().contains('401');
-    if (context.mounted) {
-      if (isAuthError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi kết nối: $e')),
-        );
-      }
-    }
-  }
-}
-
-void _showSellerRegistrationDialog(BuildContext context) {
-  final shopNameCtrl = TextEditingController();
-  final shopDescCtrl = TextEditingController();
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: AppColors.softWhite,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        24, 24, 24,
-        MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40, height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.pearlMist,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.charcoalInk,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.storefront_rounded,
-                    color: AppColors.vanillaCream, size: 22),
-              ),
-              const SizedBox(width: 14),
-              Text('Bắt đầu bán hàng', style: AppTextStyles.titleLarge),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Mở cửa hàng miễn phí, bắt đầu kinh doanh ngay!',
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.stoneGray),
-          ),
-          const SizedBox(height: 24),
-          Text('Tên cửa hàng *',
-              style: AppTextStyles.labelMedium
-                  .copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: shopNameCtrl,
-            decoration: InputDecoration(
-              hintText: 'VD: Fashion Store ABC',
-              filled: true,
-              fillColor: AppColors.softWhite,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text('Mô tả (tuỳ chọn)',
-              style: AppTextStyles.labelMedium
-                  .copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: shopDescCtrl,
-            maxLines: 2,
-            decoration: InputDecoration(
-              hintText: 'Chuyên thời trang cao cấp...',
-              filled: true,
-              fillColor: AppColors.softWhite,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () => _registerSeller(
-                  context, shopNameCtrl.text.trim(), shopDescCtrl.text.trim()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.charcoalInk,
-                foregroundColor: AppColors.vanillaCream,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
-              ),
-              child: Text('Mở cửa hàng',
-                  style: AppTextStyles.button
-                      .copyWith(color: AppColors.vanillaCream)),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Future<void> _registerSeller(
-    BuildContext context, String shopName, String shopDesc) async {
-  if (shopName.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Vui lòng nhập tên cửa hàng')),
-    );
-    return;
-  }
-
-  try {
-    final dio = getIt<DioClient>().dio;
-    await dio.post('/seller/register', data: {
-      'shopName': shopName,
-      if (shopDesc.isNotEmpty) 'shopDescription': shopDesc,
-    });
-
-    if (!context.mounted) return;
-    Navigator.pop(context); // close bottom sheet
-
-    // Update auth role in local storage
-    context.read<AuthBloc>().add(const AuthCheckRequested());
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🎉 Mở cửa hàng thành công!'),
-        backgroundColor: Color(0xFF4CAF50),
-      ),
-    );
-
-    // Navigate to seller dashboard
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (context.mounted) {
-      context.push('/seller');
-    }
-  } catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-}
-
-// ─── Delivery Center Functions ───
-
-void _onDeliveryCenterTap(BuildContext context) async {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    useRootNavigator: true,
-    builder: (_) => const Center(child: CircularProgressIndicator()),
-  );
-
-  try {
-    final dio = getIt<DioClient>().dio;
-    final response = await dio.get('/delivery/status');
-    final data = response.data;
-
-    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
-
-    if (data['isDriver'] == true && context.mounted) {
-      context.push('/delivery');
-    } else if (context.mounted) {
-      _showDeliveryRegistrationDialog(context);
-    }
-  } catch (e) {
-    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
-
-    final isAuthError = e.toString().contains('401');
-    if (context.mounted) {
-      if (isAuthError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi kết nối: $e')),
-        );
-      }
-    }
-  }
-}
-
-void _showDeliveryRegistrationDialog(BuildContext context) {
-  final vehicleCtrl = TextEditingController(text: 'Xe máy');
-  final plateCtrl = TextEditingController();
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: AppColors.softWhite,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        24, 24, 24,
-        MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40, height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.pearlMist,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF26A69A),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.delivery_dining_rounded,
-                    color: Colors.white, size: 22),
-              ),
-              const SizedBox(width: 14),
-              Text('Đăng ký giao hàng', style: AppTextStyles.titleLarge),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Nhận đơn giao hàng, kiếm thu nhập thêm!',
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.stoneGray),
-          ),
-          const SizedBox(height: 24),
-          Text('Loại xe *',
-              style: AppTextStyles.labelMedium
-                  .copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: vehicleCtrl,
-            decoration: InputDecoration(
-              hintText: 'VD: Xe máy, Ô tô',
-              filled: true,
-              fillColor: AppColors.softWhite,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text('Biển số xe (tuỳ chọn)',
-              style: AppTextStyles.labelMedium
-                  .copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: plateCtrl,
-            decoration: InputDecoration(
-              hintText: 'VD: 59A1-12345',
-              filled: true,
-              fillColor: AppColors.softWhite,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: AppColors.pearlMist),
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () => _registerDriver(
-                  context, vehicleCtrl.text.trim(), plateCtrl.text.trim()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF26A69A),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                elevation: 0,
-              ),
-              child: Text('Bắt đầu giao hàng',
-                  style: AppTextStyles.button.copyWith(color: Colors.white)),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Future<void> _registerDriver(
-    BuildContext context, String vehicleType, String licensePlate) async {
-  if (vehicleType.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Vui lòng nhập loại xe')),
-    );
-    return;
-  }
-
-  try {
-    final dio = getIt<DioClient>().dio;
-    await dio.post('/delivery/register', data: {
-      'vehicleType': vehicleType,
-      if (licensePlate.isNotEmpty) 'licensePlate': licensePlate,
-    });
-
-    if (!context.mounted) return;
-    Navigator.pop(context); // close bottom sheet
-
-    context.read<AuthBloc>().add(const AuthCheckRequested());
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🚀 Đăng ký giao hàng thành công!'),
-        backgroundColor: Color(0xFF26A69A),
-      ),
-    );
-
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (context.mounted) {
-      context.push('/delivery');
-    }
-  } catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
-      );
-    }
-  }
-}
-
-// ─── Payment Methods Bottom Sheet ───
-void _showPaymentMethods(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: AppColors.softWhite,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(width: 40, height: 4,
-              decoration: BoxDecoration(color: AppColors.pearlMist,
-                borderRadius: BorderRadius.circular(2))),
-          ),
-          const SizedBox(height: 20),
-          Text('Phương thức thanh toán', style: AppTextStyles.titleLarge),
-          const SizedBox(height: 20),
-          _paymentTile(Icons.money, 'Thanh toán khi nhận hàng (COD)', true),
-          _paymentTile(Icons.account_balance_wallet_outlined, 'Ví điện tử', false),
-          _paymentTile(Icons.credit_card_outlined, 'Thẻ tín dụng / ghi nợ', false),
-          _paymentTile(Icons.account_balance_outlined, 'Chuyển khoản ngân hàng', false),
-          const SizedBox(height: 8),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _paymentTile(IconData icon, String label, bool isActive) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 10),
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: isActive ? AppColors.charcoalInk : AppColors.softWhite,
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(
-        color: isActive ? AppColors.charcoalInk : AppColors.pearlMist),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, size: 22,
-            color: isActive ? Colors.white : AppColors.charcoalInk),
-        const SizedBox(width: 14),
-        Expanded(child: Text(label, style: TextStyle(
-          color: isActive ? Colors.white : AppColors.charcoalInk,
-          fontWeight: FontWeight.w500,
-        ))),
-        if (isActive)
-          const Icon(Icons.check_circle, size: 20, color: Color(0xFF4CAF50)),
-      ],
-    ),
-  );
-}
-
-// ─── Notifications Bottom Sheet ───
-void _showNotifications(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: AppColors.softWhite,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 40, height: 4,
-            decoration: BoxDecoration(color: AppColors.pearlMist,
-              borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text('Thông báo', style: AppTextStyles.titleLarge),
-          ),
-          const SizedBox(height: 20),
-          _notifTile('🛒', 'Đơn hàng đã xác nhận',
-              'Đơn hàng #ABC123 đã được xác nhận', '2 phút trước'),
-          _notifTile('🚚', 'Đang giao hàng',
-              'Đơn hàng #DEF456 đang trên đường giao', '1 giờ trước'),
-          _notifTile('🎉', 'Ưu đãi đặc biệt',
-              'Giảm 20% cho đơn hàng tiếp theo!', '3 giờ trước'),
-          const SizedBox(height: 8),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _notifTile(String emoji, String title, String desc, String time) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 10),
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: AppColors.softWhite,
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 24)),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: AppTextStyles.titleSmall),
-              const SizedBox(height: 2),
-              Text(desc, style: AppTextStyles.bodySmall),
-              const SizedBox(height: 4),
-              Text(time, style: TextStyle(
-                  fontSize: 11, color: AppColors.stoneGray)),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-// ─── Help & Support Bottom Sheet ───
-void _showHelp(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: AppColors.softWhite,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(width: 40, height: 4,
-              decoration: BoxDecoration(color: AppColors.pearlMist,
-                borderRadius: BorderRadius.circular(2))),
-          ),
-          const SizedBox(height: 20),
-          Text('Trợ giúp & Hỗ trợ', style: AppTextStyles.titleLarge),
-          const SizedBox(height: 20),
-          _helpTile(Icons.chat_bubble_outline, 'Chat với hỗ trợ'),
-          _helpTile(Icons.email_outlined, 'Gửi email: support@lucent.vn'),
-          _helpTile(Icons.phone_outlined, 'Hotline: 1900 1234'),
-          _helpTile(Icons.article_outlined, 'Câu hỏi thường gặp'),
-          _helpTile(Icons.privacy_tip_outlined, 'Chính sách bảo mật'),
-          _helpTile(Icons.description_outlined, 'Điều khoản sử dụng'),
-          const SizedBox(height: 8),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _helpTile(IconData icon, String label) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    child: ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-      leading: Icon(icon, color: AppColors.charcoalInk, size: 22),
-      title: Text(label, style: AppTextStyles.titleSmall),
-      trailing: Icon(Icons.chevron_right, color: AppColors.stoneGray, size: 20),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      tileColor: AppColors.softWhite,
-      onTap: () {},
-    ),
-  );
-}
+import '../widgets/profile_modals.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -613,7 +43,7 @@ class ProfilePage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Hồ Sơ',
+                        Text(AppLocalizations.of(context)!.profileTitle,
                             style: AppTextStyles.displayLarge
                                 .copyWith(fontSize: 28)),
                         Container(
@@ -632,8 +62,9 @@ class ProfilePage extends StatelessWidget {
                   CircleAvatar(
                     radius: 44,
                     backgroundColor: AppColors.pearlMist,
-                    child: Icon(Icons.person_outline_rounded,
-                        size: 44, color: AppColors.charcoalInk),
+                    backgroundImage: state.avatar != null && state.avatar!.isNotEmpty ? NetworkImage(state.avatar!) : null,
+                    child: state.avatar == null || state.avatar!.isEmpty ? Icon(Icons.person_outline_rounded,
+                        size: 44, color: AppColors.charcoalInk) : null,
                   ),
                   const SizedBox(height: 14),
                   Text(state.name, style: AppTextStyles.titleLarge),
@@ -648,6 +79,7 @@ class ProfilePage extends StatelessWidget {
                           builder: (_) => EditProfilePage(
                             name: state.name,
                             email: state.email,
+                            avatar: state.avatar,
                           ),
                         ),
                       );
@@ -663,7 +95,7 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child:
-                          Text('Sửa hồ sơ', style: AppTextStyles.titleSmall),
+                          Text(AppLocalizations.of(context)!.editProfileTitle, style: AppTextStyles.titleSmall),
                     ),
                   ),
 
@@ -674,12 +106,12 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         _StatCard(
                             count: '${state.orderCount}',
-                            label: 'Đơn hàng',
+                            label: AppLocalizations.of(context)!.ordersCount,
                             icon: Icons.shopping_bag_outlined),
                         const SizedBox(width: 14),
                         _StatCard(
                             count: '${state.addressCount}',
-                            label: 'Địa chỉ',
+                            label: AppLocalizations.of(context)!.addressesCount,
                             icon: Icons.location_on_outlined),
                       ],
                     ),
@@ -702,34 +134,34 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         _MenuItem(
                             icon: Icons.shopping_bag_outlined,
-                            label: 'Đơn hàng của tôi',
+                            label: AppLocalizations.of(context)!.myOrders,
                             onTap: () => context.push('/orders')),
                         _MenuItem(
                             icon: Icons.location_on_outlined,
-                            label: 'Địa chỉ giao hàng',
+                            label: AppLocalizations.of(context)!.shippingAddresses,
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => const AddressPage()),
                             )),
                         _MenuItem(
                             icon: Icons.credit_card_outlined,
-                            label: 'Phương thức thanh toán',
-                            onTap: () => _showPaymentMethods(context)),
+                            label: AppLocalizations.of(context)!.paymentMethods2,
+                            onTap: () => ProfileModals.showPaymentMethods(context)),
                         _MenuItem(
                             icon: Icons.notifications_none_rounded,
-                            label: 'Thông báo',
+                            label: AppLocalizations.of(context)!.notifMenuTitle,
                             onTap: () => context.push('/notifications')),
                         _MenuItem(
                             icon: Icons.chat_bubble_outline_rounded,
-                            label: 'Tin nhắn',
+                            label: AppLocalizations.of(context)!.messagesMenu,
                             onTap: () => context.push('/chat')),
                         _MenuItem(
                             icon: Icons.help_outline_rounded,
-                            label: 'Trợ giúp & Hỗ trợ',
-                            onTap: () => _showHelp(context)),
+                            label: AppLocalizations.of(context)!.helpAndSupport,
+                            onTap: () => ProfileModals.showHelp(context)),
                         _MenuItem(
                             icon: Icons.language_rounded,
-                            label: 'Ngôn ngữ / Language',
+                            label: AppLocalizations.of(context)!.languageMenu,
                             trailing: Text(
                               localeProvider.isVietnamese ? '🇻🇳 Tiếng Việt' : '🇺🇸 English',
                               style: TextStyle(fontSize: 13, color: AppColors.stoneGray),
@@ -755,7 +187,7 @@ class ProfilePage extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 20),
-                                      Text('Chọn ngôn ngữ / Choose Language',
+                                      Text(AppLocalizations.of(context)!.chooseLanguage,
                                           style: AppTextStyles.titleMedium),
                                       const SizedBox(height: 20),
                                       _LangOption(
@@ -793,13 +225,13 @@ class ProfilePage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 28, bottom: 8),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Dịch vụ',
+                      child: Text(AppLocalizations.of(context)!.services,
                           style: AppTextStyles.titleMedium),
                     ),
                   ),
                   // Kênh Người Bán
                   GestureDetector(
-                    onTap: () => _onSellerCenterTap(context),
+                    onTap: () => ProfileModals.onSellerCenterTap(context),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -827,12 +259,12 @@ class ProfilePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Kênh Người Bán',
+                                Text(AppLocalizations.of(context)!.sellerChannel,
                                     style: AppTextStyles.titleSmall
                                         .copyWith(color: Colors.white)),
                                 const SizedBox(height: 3),
                                 Text(
-                                  'Quản lý cửa hàng & đơn hàng',
+                                  AppLocalizations.of(context)!.sellerChannelDesc,
                                   style: TextStyle(
                                     color: Colors.white.withValues(alpha: 0.6),
                                     fontSize: 12,
@@ -850,7 +282,7 @@ class ProfilePage extends StatelessWidget {
                   const SizedBox(height: 12),
                   // Kênh Giao Hàng
                   GestureDetector(
-                    onTap: () => _onDeliveryCenterTap(context),
+                    onTap: () => ProfileModals.onDeliveryCenterTap(context),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -878,12 +310,12 @@ class ProfilePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Kênh Giao Hàng',
+                                Text(AppLocalizations.of(context)!.deliveryChannel,
                                     style: AppTextStyles.titleSmall
                                         .copyWith(color: Colors.white)),
                                 const SizedBox(height: 3),
                                 Text(
-                                  'Nhận đơn giao & kiếm thu nhập',
+                                  AppLocalizations.of(context)!.deliveryChannelDesc,
                                   style: TextStyle(
                                     color: Colors.white.withValues(alpha: 0.6),
                                     fontSize: 12,
@@ -940,7 +372,7 @@ class ProfilePage extends StatelessWidget {
                                               .copyWith(color: Colors.white)),
                                       const SizedBox(height: 3),
                                       Text(
-                                        'Quản lý hệ thống & duyệt đơn',
+                                        AppLocalizations.of(context)!.adminPanelDesc,
                                         style: TextStyle(
                                           color: Colors.white.withValues(alpha: 0.6),
                                           fontSize: 12,
@@ -964,7 +396,7 @@ class ProfilePage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 28, bottom: 8),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('Tuỳ chỉnh',
+                      child: Text(AppLocalizations.of(context)!.preferences,
                           style: AppTextStyles.titleMedium),
                     ),
                   ),
@@ -976,7 +408,7 @@ class ProfilePage extends StatelessWidget {
                     child: Column(
                       children: [
                         _ToggleItem(
-                            label: 'Chế độ tối',
+                            label: AppLocalizations.of(context)!.darkModeToggle,
                             value: state.darkMode,
                             onChanged: (v) {
                               context
@@ -990,7 +422,7 @@ class ProfilePage extends StatelessWidget {
                             endIndent: 16,
                             color: AppColors.pearlMist),
                         _ToggleItem(
-                            label: 'Thông báo đẩy',
+                            label: AppLocalizations.of(context)!.pushNotifToggle,
                             value: state.pushNotifications,
                             onChanged: (v) => context
                                 .read<ProfileBloc>()
@@ -1002,7 +434,7 @@ class ProfilePage extends StatelessWidget {
                             endIndent: 16,
                             color: AppColors.pearlMist),
                         _ToggleItem(
-                            label: 'Cập nhật qua email',
+                            label: AppLocalizations.of(context)!.emailUpdatesToggle,
                             value: state.emailUpdates,
                             onChanged: (v) => context
                                 .read<ProfileBloc>()
@@ -1026,7 +458,7 @@ class ProfilePage extends StatelessWidget {
                           color: AppColors.pearlMist,
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: Text('Đăng Xuất',
+                        child: Text(AppLocalizations.of(context)!.signOut,
                             style: AppTextStyles.titleSmall
                                 .copyWith(color: AppColors.stoneGray)),
                       ),

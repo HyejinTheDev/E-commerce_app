@@ -10,6 +10,11 @@ class HomeLoaded extends HomeEvent {
   const HomeLoaded();
 }
 
+/// Pull-to-refresh — silently reloads without full loading spinner
+class HomeRefreshed extends HomeEvent {
+  const HomeRefreshed();
+}
+
 class HomeCategorySelected extends HomeEvent {
   final int index;
   const HomeCategorySelected(this.index);

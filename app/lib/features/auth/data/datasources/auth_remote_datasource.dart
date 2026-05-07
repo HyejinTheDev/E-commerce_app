@@ -10,6 +10,9 @@ class AuthRemoteDataSource {
 
   static const _roleKey = 'user_role';
   static const _nameKey = 'user_name';
+  static const _rememberKey = 'remember_me';
+  static const _savedEmailKey = 'saved_email';
+  static const _savedPasswordKey = 'saved_password';
 
   AuthRemoteDataSource(this._client);
 
@@ -85,5 +88,45 @@ class AuthRemoteDataSource {
   Future<bool> hasToken() async {
     final token = await _storage.read(key: AppConstants.accessTokenKey);
     return token != null && token.isNotEmpty;
+  }
+
+  // ─── Remember Me ───
+
+  /// Save login credentials securely for auto-fill
+  Future<void> saveCredentials(String email, String password) async {
+    await _storage.write(key: _rememberKey, value: 'true');
+    await _storage.write(key: _savedEmailKey, value: email);
+    await _storage.write(key: _savedPasswordKey, value: password);
+  }
+
+  /// Clear saved credentials
+  Future<void> clearCredentials() async {
+    await _storage.delete(key: _rememberKey);
+    await _storage.delete(key: _savedEmailKey);
+    await _storage.delete(key: _savedPasswordKey);
+  }
+
+  /// Load saved credentials; returns null if not remembered
+  Future<Map<String, String>?> getSavedCredentials() async {
+    final remember = await _storage.read(key: _rememberKey);
+    if (remember != 'true') return null;
+    final email = await _storage.read(key: _savedEmailKey);
+    final password = await _storage.read(key: _savedPasswordKey);
+    if (email == null || password == null) return null;
+    return {'email': email, 'password': password};
+  }
+
+  /// Check if "remember me" is enabled
+  Future<bool> isRememberMeEnabled() async {
+    final remember = await _storage.read(key: _rememberKey);
+    return remember == 'true';
+  }
+
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _client.dio.post('/auth/forgot-password', data: {'email': email});
+    } catch (e) {
+      // Ignored
+    }
   }
 }

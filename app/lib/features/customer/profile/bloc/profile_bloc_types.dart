@@ -27,6 +27,7 @@ class ProfileSignedOut extends ProfileEvent {
 class ProfileState extends Equatable {
   final String name;
   final String email;
+  final String? avatar;
   final int orderCount;
   final int addressCount;
   final bool darkMode;
@@ -37,6 +38,7 @@ class ProfileState extends Equatable {
   const ProfileState({
     this.name = 'Sarah Johnson',
     this.email = 'sarah.j@email.com',
+    this.avatar,
     this.orderCount = 12,
     this.addressCount = 2,
     this.darkMode = false,
@@ -46,16 +48,22 @@ class ProfileState extends Equatable {
   });
 
   ProfileState copyWith({
+    String? name,
+    String? email,
+    String? avatar,
+    int? orderCount,
+    int? addressCount,
     bool? darkMode,
     bool? pushNotifications,
     bool? emailUpdates,
     bool? isSignedOut,
   }) {
     return ProfileState(
-      name: name,
-      email: email,
-      orderCount: orderCount,
-      addressCount: addressCount,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatar: avatar ?? this.avatar,
+      orderCount: orderCount ?? this.orderCount,
+      addressCount: addressCount ?? this.addressCount,
       darkMode: darkMode ?? this.darkMode,
       pushNotifications: pushNotifications ?? this.pushNotifications,
       emailUpdates: emailUpdates ?? this.emailUpdates,
@@ -65,7 +73,7 @@ class ProfileState extends Equatable {
 
   @override
   List<Object?> get props => [
-        name, email, orderCount, addressCount,
+        name, email, avatar, orderCount, addressCount,
         darkMode, pushNotifications, emailUpdates, isSignedOut,
       ];
 }

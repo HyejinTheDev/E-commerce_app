@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
@@ -43,7 +44,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: AppColors.charcoalInk))
           : _order == null
-              ? Center(child: Text('Không tìm thấy đơn hàng', style: AppTextStyles.titleMedium))
+              ? Center(child: Text(AppLocalizations.of(context)!.orderNotFound, style: AppTextStyles.titleMedium))
               : RefreshIndicator(onRefresh: _loadOrder, child: _buildContent()),
     );
   }
@@ -106,14 +107,14 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                 const SizedBox(height: 28),
 
                 // ─── Order Items ───
-                Text('Sản phẩm', style: AppTextStyles.titleMedium),
+                Text(AppLocalizations.of(context)!.products, style: AppTextStyles.titleMedium),
                 const SizedBox(height: 12),
                 ...items.map((item) => _buildItemCard(item as Map<String, dynamic>)),
 
                 // ─── Delivery Address ───
                 if (address != null) ...[
                   const SizedBox(height: 24),
-                  Text('Địa chỉ giao hàng', style: AppTextStyles.titleMedium),
+                  Text(AppLocalizations.of(context)!.shippingAddress, style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -144,7 +145,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                 // ─── Shipment Info ───
                 if (shipment != null) ...[
                   const SizedBox(height: 24),
-                  Text('Thông tin giao hàng', style: AppTextStyles.titleMedium),
+                  Text(AppLocalizations.of(context)!.shippingInfo, style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -163,8 +164,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Tài xế đang giao', style: AppTextStyles.titleSmall),
-                              Text('Trạng thái: ${_shipmentStatusLabel(shipment['status'])}',
+                              Text(AppLocalizations.of(context)!.driverDelivering, style: AppTextStyles.titleSmall),
+                              Text(AppLocalizations.of(context)!.statusLabel(_shipmentStatusLabel(shipment['status'])),
                                   style: AppTextStyles.bodySmall.copyWith(color: AppColors.stoneGray)),
                             ],
                           ),
@@ -176,7 +177,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
                 // ─── Summary ───
                 const SizedBox(height: 24),
-                Text('Tóm tắt', style: AppTextStyles.titleMedium),
+                Text(AppLocalizations.of(context)!.summary, style: AppTextStyles.titleMedium),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -186,11 +187,11 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                   ),
                   child: Column(
                     children: [
-                      _summaryRow('Mã đơn', '#${widget.orderId.substring(0, 8)}...'),
-                      _summaryRow('Số sản phẩm', '${items.length} sản phẩm'),
-                      _summaryRow('Phương thức', _order!['paymentMethod'] ?? 'COD'),
+                      _summaryRow(AppLocalizations.of(context)!.orderCode, '#${widget.orderId.substring(0, 8)}...'),
+                      _summaryRow(AppLocalizations.of(context)!.products, AppLocalizations.of(context)!.itemCountLabel(items.length)),
+                      _summaryRow(AppLocalizations.of(context)!.paymentMethodLabel, _order!['paymentMethod'] ?? 'COD'),
                       const Divider(height: 20),
-                      _summaryRow('Tổng cộng', CurrencyFormatter.formatVnd(total), isBold: true),
+                      _summaryRow(AppLocalizations.of(context)!.orderTotal, CurrencyFormatter.formatVnd(total), isBold: true),
                     ],
                   ),
                 ),
@@ -205,13 +206,14 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   // ─── Timeline Widget ───
   Widget _buildTimeline(String status, DateTime? createdAt, Map<String, dynamic>? shipment) {
+    final l = AppLocalizations.of(context)!;
     final steps = [
-      _TimelineStep('Đặt hàng', 'Đơn hàng đã được tạo', Icons.receipt_long_rounded, true, createdAt),
-      _TimelineStep('Xác nhận', 'Người bán đã xác nhận', Icons.check_circle_rounded,
+      _TimelineStep(l.stepPlaced, l.stepPlacedDesc, Icons.receipt_long_rounded, true, createdAt),
+      _TimelineStep(l.stepConfirmed, l.stepConfirmedDesc, Icons.check_circle_rounded,
           _isStepDone(status, 'CONFIRMED'), null),
-      _TimelineStep('Đang giao', 'Đang trên đường giao', Icons.local_shipping_rounded,
+      _TimelineStep(l.shippingStatus, l.stepShippingDesc, Icons.local_shipping_rounded,
           _isStepDone(status, 'SHIPPING'), _parseDate(shipment?['createdAt'])),
-      _TimelineStep('Hoàn tất', 'Đã giao thành công', Icons.verified_rounded,
+      _TimelineStep(l.stepComplete, l.stepCompleteDesc, Icons.verified_rounded,
           _isStepDone(status, 'DELIVERED'), _parseDate(shipment?['deliveredAt'])),
     ];
 
@@ -226,7 +228,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Trạng thái đơn hàng', style: AppTextStyles.titleMedium),
+          Text(l.orderStatusTitle, style: AppTextStyles.titleMedium),
           const SizedBox(height: 16),
           if (isCancelled)
             Container(
@@ -239,7 +241,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                 children: [
                   const Icon(Icons.cancel_rounded, color: Colors.red, size: 20),
                   const SizedBox(width: 8),
-                  Text('Đơn hàng đã bị huỷ', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
+                  Text(l.orderCancelled, style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
                 ],
               ),
             )
@@ -333,7 +335,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product?['name'] ?? 'Sản phẩm', style: AppTextStyles.titleSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(product?['name'] ?? AppLocalizations.of(context)!.product, style: AppTextStyles.titleSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 3),
                 Text('x$qty', style: AppTextStyles.bodySmall.copyWith(color: AppColors.stoneGray)),
               ],
@@ -407,35 +409,38 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   }
 
   String _statusLabel(String s) {
+    final l = AppLocalizations.of(context)!;
     switch (s) {
-      case 'DELIVERED': return 'Đã giao thành công';
-      case 'SHIPPING': return 'Đang giao hàng';
-      case 'CONFIRMED': return 'Đã xác nhận';
-      case 'PROCESSING': return 'Đang xử lý';
-      case 'CANCELLED': return 'Đã huỷ';
-      default: return 'Chờ xác nhận';
+      case 'DELIVERED': return l.statusDelivered;
+      case 'SHIPPING': return l.statusShipping;
+      case 'CONFIRMED': return l.statusConfirmed;
+      case 'PROCESSING': return l.statusProcessing;
+      case 'CANCELLED': return l.statusCancelled;
+      default: return l.statusPending;
     }
   }
 
   String _statusSubtitle(String s) {
+    final l = AppLocalizations.of(context)!;
     switch (s) {
-      case 'DELIVERED': return 'Cảm ơn bạn đã mua hàng!';
-      case 'SHIPPING': return 'Đơn hàng đang trên đường đến bạn';
-      case 'CONFIRMED': return 'Người bán đang chuẩn bị hàng';
-      case 'CANCELLED': return 'Đơn hàng đã bị huỷ bỏ';
-      default: return 'Đang chờ người bán xác nhận';
+      case 'DELIVERED': return l.subtitleDelivered;
+      case 'SHIPPING': return l.subtitleShipping;
+      case 'CONFIRMED': return l.subtitleConfirmed;
+      case 'CANCELLED': return l.subtitleCancelled;
+      default: return l.subtitlePending;
     }
   }
 
   String _shipmentStatusLabel(String? s) {
+    final l = AppLocalizations.of(context)!;
     switch (s) {
-      case 'ASSIGNED': return 'Đã giao cho tài xế';
-      case 'PICKING_UP': return 'Đang lấy hàng';
-      case 'PICKED_UP': return 'Đã lấy hàng';
-      case 'IN_TRANSIT': return 'Đang vận chuyển';
-      case 'DELIVERED': return 'Đã giao';
-      case 'FAILED': return 'Giao thất bại';
-      default: return 'Chưa rõ';
+      case 'ASSIGNED': return l.shipAssigned;
+      case 'PICKING_UP': return l.shipPickingUp;
+      case 'PICKED_UP': return l.shipPickedUp;
+      case 'IN_TRANSIT': return l.shipInTransit;
+      case 'DELIVERED': return l.shipDelivered;
+      case 'FAILED': return l.shipFailed;
+      default: return l.shipUnknown;
     }
   }
 }

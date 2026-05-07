@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../di/injection.dart';
 import '../../features/customer/home/presentation/pages/home_page.dart';
 import '../../features/customer/home/bloc/home_bloc.dart';
@@ -17,6 +18,7 @@ import '../../features/customer/checkout/bloc/checkout_bloc.dart';
 import '../../features/customer/search/presentation/pages/search_page.dart';
 import '../../features/customer/search/bloc/search_bloc.dart';
 import '../../features/customer/search/bloc/search_event.dart';
+import '../../features/customer/search/domain/repositories/search_history_repository.dart';
 import '../../features/customer/profile/presentation/pages/profile_page.dart';
 import '../../features/customer/profile/bloc/profile_bloc.dart';
 import '../../features/customer/profile/bloc/profile_bloc_types.dart';
@@ -31,6 +33,7 @@ import '../../features/profile/domain/repositories/user_repository.dart';
 import '../widgets/lucent_bottom_nav.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_state.dart';
 // Seller
@@ -44,6 +47,9 @@ import '../../features/chat/presentation/pages/chat_list_page.dart';
 import '../../features/chat/presentation/pages/chat_detail_page.dart';
 // Notifications
 import '../../features/notifications/presentation/pages/notifications_page.dart';
+// Onboarding
+import '../../features/onboarding/presentation/pages/splash_page.dart';
+import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 
 /// Bridges AuthBloc stream → GoRouter refreshListenable
 class AuthNotifier extends ChangeNotifier {
@@ -68,21 +74,27 @@ class AppRouter {
 
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+    initialLocation: '/splash',
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final authStatus = authNotifier.status;
-      final role = authNotifier.role;
       final location = state.uri.path;
       final isAuthPage = location == '/login' || location == '/register';
+      final isSplashOrOnboarding =
+          location == '/splash' || location == '/onboarding';
+
+      // Let splash/onboarding through always
+      if (isSplashOrOnboarding) return null;
 
       // Still loading — don't redirect yet
-      if (authStatus == AuthStatus.initial || authStatus == AuthStatus.loading) {
+      if (authStatus == AuthStatus.initial ||
+          authStatus == AuthStatus.loading) {
         return null;
       }
 
       // Not logged in → force to login (unless already there)
-      if (authStatus == AuthStatus.unauthenticated || authStatus == AuthStatus.error) {
+      if (authStatus == AuthStatus.unauthenticated ||
+          authStatus == AuthStatus.error) {
         return isAuthPage ? null : '/login';
       }
 
@@ -97,6 +109,29 @@ class AppRouter {
       return null; // no redirect
     },
     routes: [
+      // ─── Splash Screen ───
+      GoRoute(
+        path: '/splash',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => _SplashWrapper(),
+      ),
+
+      // ─── Onboarding ───
+      GoRoute(
+        path: '/onboarding',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => OnboardingPage(
+          onFinished: () {
+            final authStatus = authNotifier.status;
+            if (authStatus == AuthStatus.authenticated) {
+              _rootNavigatorKey.currentContext?.go('/home');
+            } else {
+              _rootNavigatorKey.currentContext?.go('/login');
+            }
+          },
+        ),
+      ),
+
       // ─── Customer Shell Route (with bottom nav) ───
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -118,7 +153,11 @@ class AppRouter {
             path: '/search',
             pageBuilder: (context, state) => NoTransitionPage(
               child: BlocProvider(
-                create: (_) => SearchBloc(getIt<ProductRepository>())
+                create: (_) => SearchBloc(
+                  getIt<ProductRepository>(),
+                  getIt<SearchHistoryRepository>(),
+                )
+                  ..add(const SearchHistoryLoaded())
                   ..add(const SearchQueryChanged('')),
                 child: const SearchPage(),
               ),
@@ -240,6 +279,11 @@ class AppRouter {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const RegisterPage(),
       ),
+      GoRoute(
+        path: '/forgot-password',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
     ],
   );
 }
@@ -279,5 +323,53 @@ class _ScaffoldWithNav extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+/// Wraps SplashPage and decides where to navigate after splash finishes.
+/// Checks SharedPreferences to see if onboarding was already completed.
+class _SplashWrapper extends StatefulWidget {
+  @override
+  State<_SplashWrapper> createState() => _SplashWrapperState();
+}
+
+class _SplashWrapperState extends State<_SplashWrapper> {
+  bool _hasSeenOnboarding = false;
+  bool _prefsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+        _prefsLoaded = true;
+      });
+    }
+  }
+
+  void _onSplashFinished() {
+    if (_hasSeenOnboarding) {
+      // Returning user → go to auth flow (router redirect handles login/home)
+      final authStatus = AppRouter.authNotifier.status;
+      if (authStatus == AuthStatus.authenticated) {
+        context.go('/home');
+      } else {
+        context.go('/login');
+      }
+    } else {
+      // First-time user → show onboarding
+      context.go('/onboarding');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SplashPage(onFinished: _onSplashFinished);
   }
 }

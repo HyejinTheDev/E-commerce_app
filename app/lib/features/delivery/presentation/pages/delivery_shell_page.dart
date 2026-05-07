@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -98,21 +99,21 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
         height: 65,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard_rounded),
-            label: 'Tổng quan',
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard_rounded),
+            label: AppLocalizations.of(context)!.deliveryOverview,
           ),
           NavigationDestination(
-            icon: Icon(Icons.local_shipping_outlined),
-            selectedIcon: Icon(Icons.local_shipping_rounded),
-            label: 'Đơn giao',
+            icon: const Icon(Icons.local_shipping_outlined),
+            selectedIcon: const Icon(Icons.local_shipping_rounded),
+            label: AppLocalizations.of(context)!.deliveryShipmentsNav,
           ),
           NavigationDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history_rounded),
-            label: 'Lịch sử',
+            icon: const Icon(Icons.history_outlined),
+            selectedIcon: const Icon(Icons.history_rounded),
+            label: AppLocalizations.of(context)!.deliveryHistoryNav,
           ),
         ],
       ),
@@ -147,10 +148,10 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Tài xế', style: AppTextStyles.titleLarge),
+                            Text(AppLocalizations.of(context)!.driverTitle, style: AppTextStyles.titleLarge),
                             const SizedBox(height: 2),
                             Text(
-                              '${_profile['vehicleType'] ?? 'Xe máy'} · ${_profile['licensePlate'] ?? ''}',
+                              '${_profile['vehicleType'] ?? 'Motorcycle'} · ${_profile['licensePlate'] ?? ''}',
                               style: AppTextStyles.bodySmall,
                             ),
                           ],
@@ -159,7 +160,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                       IconButton(
                         onPressed: () => context.go('/home'),
                         icon: Icon(Icons.close_rounded, color: AppColors.stoneGray),
-                        tooltip: 'Quay về mua sắm',
+                        tooltip: AppLocalizations.of(context)!.backToShopping,
                       ),
                     ],
                   ),
@@ -192,13 +193,13 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _isAvailable ? 'Đang nhận đơn' : 'Đã tắt nhận đơn',
+                                _isAvailable ? AppLocalizations.of(context)!.acceptingOrders : AppLocalizations.of(context)!.notAcceptingOrders,
                                 style: AppTextStyles.titleSmall,
                               ),
                               Text(
                                 _isAvailable
-                                    ? 'Bạn sẽ nhận được đơn giao mới'
-                                    : 'Bật lại để nhận đơn giao',
+                                    ? AppLocalizations.of(context)!.acceptingOrdersDesc
+                                    : AppLocalizations.of(context)!.enableAcceptingDesc,
                                 style: AppTextStyles.bodySmall,
                               ),
                             ],
@@ -219,21 +220,21 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                     children: [
                       _buildStatCard(
                         Icons.local_shipping_outlined,
-                        'Tổng đơn',
+                        AppLocalizations.of(context)!.totalShipments,
                         '${_stats['totalShipments'] ?? 0}',
                         const Color(0xFF5C6BC0),
                       ),
                       const SizedBox(width: 12),
                       _buildStatCard(
                         Icons.pending_actions_outlined,
-                        'Đang giao',
+                        AppLocalizations.of(context)!.activeShipments,
                         '${_stats['activeShipments'] ?? 0}',
                         const Color(0xFFEF5350),
                       ),
                       const SizedBox(width: 12),
                       _buildStatCard(
                         Icons.check_circle_outline,
-                        'Hoàn thành',
+                        AppLocalizations.of(context)!.completedShipments,
                         '${_stats['completedShipments'] ?? 0}',
                         const Color(0xFF4CAF50),
                       ),
@@ -284,7 +285,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-            child: Text('Đơn đang giao', style: AppTextStyles.titleLarge),
+            child: Text(AppLocalizations.of(context)!.currentShipments, style: AppTextStyles.titleLarge),
           ),
           Expanded(
             child: _shipments.isEmpty
@@ -295,7 +296,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                         Icon(Icons.local_shipping_outlined,
                             size: 64, color: AppColors.pearlMist),
                         const SizedBox(height: 16),
-                        Text('Chưa có đơn giao nào',
+                        Text(AppLocalizations.of(context)!.noShipments,
                             style: AppTextStyles.bodyMedium
                                 .copyWith(color: AppColors.stoneGray)),
                       ],
@@ -326,7 +327,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-            child: Text('Lịch sử giao hàng', style: AppTextStyles.titleLarge),
+            child: Text(AppLocalizations.of(context)!.deliveryHistoryTitle, style: AppTextStyles.titleLarge),
           ),
           Expanded(
             child: _history.isEmpty
@@ -337,7 +338,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                         Icon(Icons.history_outlined,
                             size: 64, color: AppColors.pearlMist),
                         const SizedBox(height: 16),
-                        Text('Chưa có lịch sử',
+                        Text(AppLocalizations.of(context)!.noHistory,
                             style: AppTextStyles.bodyMedium
                                 .copyWith(color: AppColors.stoneGray)),
                       ],
@@ -370,22 +371,22 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
     switch (status) {
       case 'ASSIGNED':
         statusColor = const Color(0xFFFFA726);
-        statusLabel = 'Được giao';
+        statusLabel = AppLocalizations.of(context)!.shipAssignedShort;
       case 'PICKING_UP':
         statusColor = const Color(0xFF5C6BC0);
-        statusLabel = 'Đang lấy hàng';
+        statusLabel = AppLocalizations.of(context)!.pickUpAction;
       case 'PICKED_UP':
         statusColor = const Color(0xFF26A69A);
-        statusLabel = 'Đã lấy hàng';
+        statusLabel = AppLocalizations.of(context)!.pickedUpAction;
       case 'IN_TRANSIT':
         statusColor = const Color(0xFF42A5F5);
-        statusLabel = 'Đang giao';
+        statusLabel = AppLocalizations.of(context)!.deliveringAction;
       case 'DELIVERED':
         statusColor = const Color(0xFF4CAF50);
-        statusLabel = 'Đã giao';
+        statusLabel = AppLocalizations.of(context)!.deliveredAction;
       case 'FAILED':
         statusColor = const Color(0xFFEF5350);
-        statusLabel = 'Thất bại';
+        statusLabel = AppLocalizations.of(context)!.failedAction;
       default:
         statusColor = AppColors.stoneGray;
         statusLabel = status;
@@ -406,7 +407,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
             children: [
               Expanded(
                 child: Text(
-                  'Đơn #${(shipment['id'] as String? ?? '').substring(0, 8)}',
+                  AppLocalizations.of(context)!.shipmentId((shipment['id'] as String? ?? '').substring(0, 8)),
                   style: AppTextStyles.titleSmall,
                 ),
               ),
@@ -445,19 +446,19 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
             Row(
               children: [
                 if (status == 'ASSIGNED')
-                  _statusButton('Lấy hàng', const Color(0xFF5C6BC0), () =>
+                  _statusButton(AppLocalizations.of(context)!.pickUpAction, const Color(0xFF5C6BC0), () =>
                       _updateStatus(shipment['id'], 'PICKING_UP')),
                 if (status == 'PICKING_UP')
-                  _statusButton('Đã lấy', const Color(0xFF26A69A), () =>
+                  _statusButton(AppLocalizations.of(context)!.pickedUpAction, const Color(0xFF26A69A), () =>
                       _updateStatus(shipment['id'], 'PICKED_UP')),
                 if (status == 'PICKED_UP')
-                  _statusButton('Đang giao', const Color(0xFF42A5F5), () =>
+                  _statusButton(AppLocalizations.of(context)!.deliveringAction, const Color(0xFF42A5F5), () =>
                       _updateStatus(shipment['id'], 'IN_TRANSIT')),
                 if (status == 'IN_TRANSIT') ...[
-                  _statusButton('Đã giao', const Color(0xFF4CAF50), () =>
+                  _statusButton(AppLocalizations.of(context)!.deliveredAction, const Color(0xFF4CAF50), () =>
                       _updateStatus(shipment['id'], 'DELIVERED')),
                   const SizedBox(width: 8),
-                  _statusButton('Thất bại', const Color(0xFFEF5350), () =>
+                  _statusButton(AppLocalizations.of(context)!.failedAction, const Color(0xFFEF5350), () =>
                       _updateStatus(shipment['id'], 'FAILED')),
                 ],
               ],
@@ -500,7 +501,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorLabel(e.toString())), backgroundColor: Colors.red),
         );
       }
     }

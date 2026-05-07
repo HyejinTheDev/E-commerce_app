@@ -9,6 +9,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   OrdersBloc(this._orderRepository) : super(const OrdersState()) {
     on<OrdersLoaded>(_onLoaded);
+    on<OrdersRefreshed>(_onRefreshed);
     on<OrdersTabChanged>(_onTabChanged);
   }
 
@@ -26,6 +27,22 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       emit(state.copyWith(
         status: OrdersStatus.error,
       ));
+    }
+  }
+
+  /// Pull-to-refresh — reload orders then re-apply current tab filter
+  Future<void> _onRefreshed(
+      OrdersRefreshed event, Emitter<OrdersState> emit) async {
+    try {
+      final orders = await _orderRepository.getMyOrders();
+      emit(state.copyWith(
+        status: OrdersStatus.loaded,
+        allOrders: orders,
+      ));
+      // Re-apply current tab filter
+      add(OrdersTabChanged(state.selectedTab));
+    } catch (_) {
+      // Keep current data on refresh error
     }
   }
 

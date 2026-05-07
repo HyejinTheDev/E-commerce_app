@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../bloc/auth_bloc.dart';
@@ -33,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
@@ -40,7 +42,7 @@ class _RegisterPageState extends State<RegisterPage> {
         } else if (state.status == AuthStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Đăng ký thất bại'),
+              content: Text(state.errorMessage ?? l.registerFailed),
               backgroundColor: AppColors.terracottaBlush,
             ),
           );
@@ -62,27 +64,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 32),
                 // Header
-                Text('Tạo\nTài Khoản', style: AppTextStyles.displayLarge.copyWith(
+                Text(l.createAccount, style: AppTextStyles.displayLarge.copyWith(
                   fontSize: 36,
                   height: 1.2,
                 )),
                 const SizedBox(height: 8),
                 Text(
-                  'Đăng ký miễn phí và bắt đầu mua sắm',
+                  l.registerSubtitle,
                   style: AppTextStyles.bodyLarge,
                 ),
                 const SizedBox(height: 36),
 
                 // ─── Fields ───
-                _buildLabel('Họ và tên'),
+                _buildLabel(l.fullName),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _nameController,
-                  hint: 'Nguyễn Văn A',
+                  hint: l.fullNameHint,
                   icon: Icons.person_outline,
                 ),
                 const SizedBox(height: 20),
-                _buildLabel('Email'),
+                _buildLabel(l.email),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _emailController,
@@ -91,11 +93,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   icon: Icons.mail_outline,
                 ),
                 const SizedBox(height: 20),
-                _buildLabel('Mật khẩu'),
+                _buildLabel(l.password),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _passwordController,
-                  hint: 'Tối thiểu 6 ký tự',
+                  hint: l.passwordHint,
                   obscure: _obscurePassword,
                   icon: Icons.lock_outline,
                   suffixIcon: IconButton(
@@ -108,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildLabel('Số điện thoại (tuỳ chọn)'),
+                _buildLabel(l.phoneOptional),
                 const SizedBox(height: 8),
                 _buildTextField(
                   controller: _phoneController,
@@ -144,7 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   color: AppColors.vanillaCream,
                                 ),
                               )
-                            : Text('Tạo Tài Khoản', style: AppTextStyles.button.copyWith(
+                            : Text(l.createAccountBtn, style: AppTextStyles.button.copyWith(
                                 color: AppColors.vanillaCream,
                               )),
                       ),
@@ -158,11 +160,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     onTap: () => context.go('/login'),
                     child: RichText(
                       text: TextSpan(
-                        text: 'Đã có tài khoản? ',
+                        text: '${l.alreadyHaveAccount} ',
                         style: AppTextStyles.bodyMedium,
                         children: [
                           TextSpan(
-                            text: 'Đăng Nhập',
+                            text: l.loginBtn,
                             style: AppTextStyles.titleSmall.copyWith(
                               color: AppColors.terracottaBlush,
                             ),
@@ -220,6 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _onRegister() {
+    final l = AppLocalizations.of(context)!;
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -227,14 +230,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập các trường bắt buộc')),
+        SnackBar(content: Text(l.fillRequired)),
       );
       return;
     }
 
     if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mật khẩu phải có ít nhất 6 ký tự')),
+        SnackBar(content: Text(l.passwordMinLength)),
       );
       return;
     }

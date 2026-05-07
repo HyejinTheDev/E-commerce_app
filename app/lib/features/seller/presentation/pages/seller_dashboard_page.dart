@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -14,6 +15,7 @@ class SellerDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: SafeArea(
@@ -51,7 +53,7 @@ class SellerDashboardPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(state.shopName ?? 'Cửa hàng',
+                            Text(state.shopName ?? l.shopLabel,
                                 style: AppTextStyles.titleLarge),
                             const SizedBox(height: 2),
                             Container(
@@ -65,8 +67,8 @@ class SellerDashboardPage extends StatelessWidget {
                               ),
                               child: Text(
                                 state.shopStatus == 'APPROVED'
-                                    ? 'Đang hoạt động'
-                                    : 'Chờ duyệt',
+                                    ? l.shopActive
+                                    : l.shopPending,
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 11,
@@ -80,7 +82,7 @@ class SellerDashboardPage extends StatelessWidget {
                         onPressed: () => context.go('/home'),
                         icon: Icon(Icons.storefront_outlined,
                             color: AppColors.stoneGray),
-                        tooltip: 'Quay về mua sắm',
+                        tooltip: l.backToShopping,
                       ),
                     ],
                   ),
@@ -101,8 +103,8 @@ class SellerDashboardPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Tổng doanh thu',
-                            style: TextStyle(
+                        Text(l.totalRevenue,
+                            style: const TextStyle(
                                 color: Color(0xFFAAAAAA), fontSize: 14)),
                         const SizedBox(height: 8),
                         Text(
@@ -123,21 +125,21 @@ class SellerDashboardPage extends StatelessWidget {
                     children: [
                       _StatCard(
                         icon: Icons.inventory_2_outlined,
-                        label: 'Sản phẩm',
+                        label: l.productsLabel,
                         value: '${state.totalProducts}',
                         color: const Color(0xFF5C6BC0),
                       ),
                       const SizedBox(width: 12),
                       _StatCard(
                         icon: Icons.receipt_long_outlined,
-                        label: 'Đơn hàng',
+                        label: l.ordersLabel,
                         value: '${state.totalOrders}',
                         color: const Color(0xFF26A69A),
                       ),
                       const SizedBox(width: 12),
                       _StatCard(
                         icon: Icons.pending_actions_outlined,
-                        label: 'Chờ xử lý',
+                        label: l.pendingLabel,
                         value: '${state.pendingOrders}',
                         color: const Color(0xFFEF5350),
                       ),
@@ -146,12 +148,12 @@ class SellerDashboardPage extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // ─── Quick Actions ───
-                  Text('Quản lý', style: AppTextStyles.titleLarge),
+                  Text(l.managementSection, style: AppTextStyles.titleLarge),
                   const SizedBox(height: 16),
                   _ActionTile(
                     icon: Icons.add_box_outlined,
-                    title: 'Thêm sản phẩm mới',
-                    subtitle: 'Đăng bán sản phẩm lên cửa hàng',
+                    title: l.addNewProduct,
+                    subtitle: l.addNewProductDesc,
                     onTap: () {
                       Navigator.push(
                         context,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/pill_button.dart';
@@ -8,12 +9,14 @@ import '../../../cart/bloc/cart_event.dart';
 import '../../bloc/checkout_bloc.dart';
 import '../../bloc/checkout_event.dart';
 import '../../bloc/checkout_state.dart';
+import '../../data/services/payment_service.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: BlocConsumer<CheckoutBloc, CheckoutState>(
@@ -33,9 +36,9 @@ class CheckoutPage extends StatelessWidget {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Đặt hàng thành công!', style: AppTextStyles.titleLarge),
+                    Text(l.orderSuccess, style: AppTextStyles.titleLarge),
                     const SizedBox(height: 8),
-                    Text('Đơn hàng của bạn đã được đặt thành công.',
+                    Text(l.orderSuccessDesc,
                         style: AppTextStyles.bodyMedium,
                         textAlign: TextAlign.center),
                   ],
@@ -43,7 +46,7 @@ class CheckoutPage extends StatelessWidget {
                 actions: [
                   Center(
                     child: PillButton(
-                      label: 'Tiếp Tục Mua Sắm',
+                      label: l.continueShopping,
                       onPressed: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
@@ -56,7 +59,7 @@ class CheckoutPage extends StatelessWidget {
           } else if (checkoutState.status == CheckoutStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(checkoutState.errorMessage ?? 'Đặt hàng thất bại. Vui lòng thử lại.'),
+                content: Text(checkoutState.errorMessage ?? l.orderFailed),
                 backgroundColor: Colors.red.shade400,
               ),
             );
@@ -78,7 +81,7 @@ class CheckoutPage extends StatelessWidget {
                         icon: const Icon(Icons.arrow_back_rounded),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      title: Text('Thanh Toán',
+                      title: Text(l.checkoutTitle,
                           style: AppTextStyles.headlineMedium),
                     ),
 
@@ -88,11 +91,11 @@ class CheckoutPage extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                         child: Row(
                           children: [
-                            _StepDot(label: 'Giao hàng', isActive: true),
+                            _StepDot(label: l.stepShipping, isActive: true),
                             Expanded(child: Container(height: 1, color: AppColors.pearlMist)),
-                            _StepDot(label: 'Thanh toán', isActive: false),
+                            _StepDot(label: l.stepPayment, isActive: false),
                             Expanded(child: Container(height: 1, color: AppColors.pearlMist)),
-                            _StepDot(label: 'Xác nhận', isActive: false),
+                            _StepDot(label: l.stepConfirm, isActive: false),
                           ],
                         ),
                       ),
@@ -103,8 +106,8 @@ class CheckoutPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
                         child: _Section(
-                          title: 'Địa Chỉ Giao Hàng',
-                          action: 'Thay đổi',
+                          title: l.shippingAddress,
+                          action: l.change,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -126,11 +129,11 @@ class CheckoutPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Giao hàng', style: AppTextStyles.titleMedium),
+                            Text(l.deliveryLabel, style: AppTextStyles.titleMedium),
                             const SizedBox(height: 12),
                             _DeliveryOption(
-                              title: 'Tiêu chuẩn (5-7 ngày)',
-                              price: 'Miễn phí',
+                              title: l.deliveryStandard,
+                              price: l.freeShipping,
                               priceColor: AppColors.sageGreen,
                               isSelected: checkoutState.deliveryOption == 0,
                               onTap: () => context.read<CheckoutBloc>().add(
@@ -138,7 +141,7 @@ class CheckoutPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             _DeliveryOption(
-                              title: 'Nhanh (2-3 ngày)',
+                              title: l.deliveryFast,
                               price: '300.000₫',
                               isSelected: checkoutState.deliveryOption == 1,
                               onTap: () => context.read<CheckoutBloc>().add(
@@ -154,8 +157,8 @@ class CheckoutPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
                         child: _Section(
-                          title: 'Thanh toán',
-                          action: 'Thay đổi',
+                          title: l.paymentMethod,
+                          action: l.change,
                           child: Row(
                             children: [
                               Container(
@@ -191,15 +194,15 @@ class CheckoutPage extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              _TotalRow('Tạm tính', cartState.formattedSubtotal),
+                              _TotalRow(l.subtotal, cartState.formattedSubtotal),
                               const SizedBox(height: 8),
-                              _TotalRow('Vận chuyển',
+                              _TotalRow(l.shipping,
                                   checkoutState.formattedDeliveryCost,
                                   valueColor: checkoutState.deliveryCost == 0
                                       ? AppColors.sageGreen
                                       : null),
                               const SizedBox(height: 8),
-                              _TotalRow('Thuế', cartState.formattedTax),
+                              _TotalRow(l.tax, cartState.formattedTax),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 12),
@@ -209,7 +212,7 @@ class CheckoutPage extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Tổng cộng',
+                                  Text(l.orderTotal,
                                       style: AppTextStyles.titleMedium),
                                   Text(cartState.formattedTotal,
                                       style: AppTextStyles.priceLarge),
@@ -242,21 +245,27 @@ class CheckoutPage extends StatelessWidget {
                   top: false,
                   child: PillButton(
                     label: checkoutState.status == CheckoutStatus.placing
-                        ? 'Đang đặt hàng...'
-                        : 'Đặt Hàng — ${cartState.formattedTotal}',
+                        ? l.placingOrder
+                        : l.placeOrderWithTotal(cartState.formattedTotal),
                     isFullWidth: true,
                     onPressed: checkoutState.status == CheckoutStatus.placing
                         ? null
-                        : () {
-                            final cartItems = context.read<CartBloc>().state.items
-                                .map((item) => {
-                                      'productId': item.productId,
-                                      'quantity': item.quantity,
-                                    })
-                                .toList();
-                            context
-                                .read<CheckoutBloc>()
-                                .add(CheckoutOrderPlaced(items: cartItems));
+                        : () async {
+                            final total = cartState.total + checkoutState.deliveryCost;
+                            final paymentService = PaymentService();
+                            final isSuccess = await paymentService.processPayment(context, amount: total);
+                            
+                            if (isSuccess && context.mounted) {
+                              final cartItems = context.read<CartBloc>().state.items
+                                  .map((item) => {
+                                        'productId': item.productId,
+                                        'quantity': item.quantity,
+                                      })
+                                  .toList();
+                              context
+                                  .read<CheckoutBloc>()
+                                  .add(CheckoutOrderPlaced(items: cartItems));
+                            }
                           },
                   ),
                 ),

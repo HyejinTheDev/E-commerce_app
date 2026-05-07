@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/di/injection.dart';
@@ -38,26 +39,28 @@ class _AddressPageState extends State<AddressPage> {
   }
 
   Future<void> _deleteAddress(String id) async {
+    final l = AppLocalizations.of(context)!;
     try {
       final dio = getIt<DioClient>().dio;
       await dio.delete('/users/addresses/$id');
       _loadAddresses();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã xóa địa chỉ'),
-              backgroundColor: Color(0xFF4CAF50)),
+          SnackBar(content: Text(l.addressDeleted),
+              backgroundColor: const Color(0xFF4CAF50)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l.errorLabel(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   }
 
   void _showAddAddress() {
+    final l = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
     final phoneCtrl = TextEditingController();
     final streetCtrl = TextEditingController();
@@ -90,14 +93,14 @@ class _AddressPageState extends State<AddressPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('Thêm địa chỉ mới', style: AppTextStyles.titleLarge),
+              Text(l.addNewAddress, style: AppTextStyles.titleLarge),
               const SizedBox(height: 20),
-              _field('Họ tên', nameCtrl, 'Nguyễn Văn A'),
-              _field('Số điện thoại', phoneCtrl, '0123456789'),
-              _field('Đường/số nhà', streetCtrl, '123 Đường ABC'),
-              _field('Phường/xã', wardCtrl, 'Phường 1'),
-              _field('Quận/huyện', districtCtrl, 'Quận 1'),
-              _field('Tỉnh/thành phố', cityCtrl, 'TP. Hồ Chí Minh'),
+              _field(l.fullNameLabel, nameCtrl, 'Nguyễn Văn A'),
+              _field(l.phoneLabel, phoneCtrl, '0123456789'),
+              _field(l.streetLabel, streetCtrl, '123 Đường ABC'),
+              _field(l.wardLabel, wardCtrl, 'Phường 1'),
+              _field(l.districtLabel, districtCtrl, 'Quận 1'),
+              _field(l.cityLabel, cityCtrl, 'TP. Hồ Chí Minh'),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -115,7 +118,7 @@ class _AddressPageState extends State<AddressPage> {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Lưu địa chỉ'),
+                  child: Text(l.saveAddress),
                 ),
               ),
             ],
@@ -152,10 +155,11 @@ class _AddressPageState extends State<AddressPage> {
     String name, String phone, String street,
     String ward, String district, String city,
   ) async {
+    final l = AppLocalizations.of(context)!;
     if (name.isEmpty || phone.isEmpty || street.isEmpty ||
         ward.isEmpty || district.isEmpty || city.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
+        SnackBar(content: Text(l.fillAllInfo)),
       );
       return;
     }
@@ -174,13 +178,13 @@ class _AddressPageState extends State<AddressPage> {
       Navigator.pop(context);
       _loadAddresses();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã thêm địa chỉ'),
-            backgroundColor: Color(0xFF4CAF50)),
+        SnackBar(content: Text(l.addressAdded),
+            backgroundColor: const Color(0xFF4CAF50)),
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l.errorLabel(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -188,10 +192,11 @@ class _AddressPageState extends State<AddressPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       appBar: AppBar(
-        title: const Text('Địa chỉ giao hàng'),
+        title: Text(l.addressTitle),
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.charcoalInk,
         elevation: 0,
@@ -212,13 +217,13 @@ class _AddressPageState extends State<AddressPage> {
                       Icon(Icons.location_off_outlined,
                           size: 64, color: AppColors.pearlMist),
                       const SizedBox(height: 16),
-                      Text('Chưa có địa chỉ nào',
+                      Text(l.noAddresses,
                           style: AppTextStyles.bodyMedium
                               .copyWith(color: AppColors.stoneGray)),
                       const SizedBox(height: 12),
                       TextButton(
                         onPressed: _showAddAddress,
-                        child: const Text('+ Thêm địa chỉ'),
+                        child: Text(l.addAddress),
                       ),
                     ],
                   ),
@@ -264,8 +269,8 @@ class _AddressPageState extends State<AddressPage> {
                                             color: AppColors.terracottaBlush,
                                             borderRadius: BorderRadius.circular(4),
                                           ),
-                                          child: const Text('Mặc định',
-                                              style: TextStyle(
+                                          child: Text(l.defaultLabel,
+                                              style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 10)),
                                         ),

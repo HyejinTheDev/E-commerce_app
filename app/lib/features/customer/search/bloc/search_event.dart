@@ -30,3 +30,18 @@ class SearchSortChanged extends SearchEvent {
 class SearchLoadMore extends SearchEvent {
   const SearchLoadMore();
 }
+
+class SearchHistoryLoaded extends SearchEvent {
+  const SearchHistoryLoaded();
+}
+
+class SearchHistoryRemoved extends SearchEvent {
+  final String query;
+  const SearchHistoryRemoved(this.query);
+  @override
+  List<Object?> get props => [query];
+}
+
+class SearchHistoryCleared extends SearchEvent {
+  const SearchHistoryCleared();
+}

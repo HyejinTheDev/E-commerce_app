@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -10,17 +11,10 @@ import '../../bloc/seller_state.dart';
 class SellerOrdersPage extends StatelessWidget {
   const SellerOrdersPage({super.key});
 
-  static const _statusMap = {
-    'PENDING': ('Chờ xác nhận', Color(0xFFFFA726)),
-    'CONFIRMED': ('Đã xác nhận', Color(0xFF42A5F5)),
-    'PROCESSING': ('Đang xử lý', Color(0xFF5C6BC0)),
-    'SHIPPING': ('Đang giao', Color(0xFF26A69A)),
-    'DELIVERED': ('Đã giao', Color(0xFF66BB6A)),
-    'CANCELLED': ('Đã hủy', Color(0xFFEF5350)),
-  };
-
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: SafeArea(
@@ -37,7 +31,7 @@ class SellerOrdersPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                  child: Text('Đơn hàng',
+                  child: Text(l.ordersLabel,
                       style: AppTextStyles.displayLarge.copyWith(fontSize: 28)),
                 ),
                 Expanded(
@@ -50,7 +44,7 @@ class SellerOrdersPage extends StatelessWidget {
                                   size: 64,
                                   color: AppColors.stoneGray.withValues(alpha: 0.4)),
                               const SizedBox(height: 16),
-                              Text('Chưa có đơn hàng',
+                              Text(l.noSellerOrders,
                                   style: AppTextStyles.titleSmall
                                       .copyWith(color: AppColors.stoneGray)),
                             ],
@@ -89,9 +83,19 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final status = order['status'] as String? ?? 'PENDING';
-    final statusInfo = SellerOrdersPage._statusMap[status] ??
-        ('Không rõ', AppColors.stoneGray);
+
+    final statusMap = {
+      'PENDING': (l.statusPending, const Color(0xFFFFA726)),
+      'CONFIRMED': (l.statusConfirmed, const Color(0xFF42A5F5)),
+      'PROCESSING': (l.statusProcessing, const Color(0xFF5C6BC0)),
+      'SHIPPING': (l.statusShipping, const Color(0xFF26A69A)),
+      'DELIVERED': (l.statusDelivered, const Color(0xFF66BB6A)),
+      'CANCELLED': (l.statusCancelled, const Color(0xFFEF5350)),
+    };
+
+    final statusInfo = statusMap[status] ?? (status, AppColors.stoneGray);
     final totalAmount =
         double.tryParse(order['totalAmount']?.toString() ?? '0') ?? 0;
     final items = (order['items'] as List<dynamic>?) ?? [];
@@ -136,13 +140,13 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Icon(Icons.person_outline, size: 14, color: AppColors.stoneGray),
                 const SizedBox(width: 6),
-                Text(customer['name'] as String? ?? 'Khách',
+                Text(customer['name'] as String? ?? l.customerLabel,
                     style: AppTextStyles.bodySmall),
               ],
             ),
           ],
           const SizedBox(height: 8),
-          Text('${items.length} sản phẩm · ${CurrencyFormatter.formatVnd(totalAmount)}',
+          Text('${l.nProductsDot(items.length)} · ${CurrencyFormatter.formatVnd(totalAmount)}',
               style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
           // Actions for PENDING orders
           if (status == 'PENDING') ...[
@@ -161,7 +165,7 @@ class _OrderCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Từ chối'),
+                    child: Text(l.rejectAction),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -178,7 +182,7 @@ class _OrderCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12)),
                       elevation: 0,
                     ),
-                    child: const Text('Xác nhận'),
+                    child: Text(l.confirmAction),
                   ),
                 ),
               ],
@@ -200,7 +204,7 @@ class _OrderCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: const Text('Giao hàng'),
+                child: Text(l.shipAction),
               ),
             ),
           ],

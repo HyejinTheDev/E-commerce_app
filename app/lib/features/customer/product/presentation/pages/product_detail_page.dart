@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/di/injection.dart';
@@ -20,6 +21,7 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: BlocListener<ProductDetailBloc, ProductDetailState>(
@@ -66,7 +68,7 @@ class ProductDetailPage extends StatelessWidget {
                         icon: const Icon(Icons.arrow_back_rounded),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      title: const Text('Chi Tiết Sản Phẩm'),
+                      title: Text(l.productDetail),
                       actions: [
                         IconButton(
                           icon: const Icon(Icons.share_outlined),
@@ -223,7 +225,7 @@ class ProductDetailPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Màu sắc', style: AppTextStyles.titleMedium),
+                            Text(l.selectColor, style: AppTextStyles.titleMedium),
                             const SizedBox(height: 12),
                             Row(
                               children: List.generate(
@@ -265,7 +267,7 @@ class ProductDetailPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Kích cỡ', style: AppTextStyles.titleMedium),
+                            Text(l.selectSize, style: AppTextStyles.titleMedium),
                             const SizedBox(height: 12),
                             Row(
                               children: List.generate(
@@ -294,7 +296,7 @@ class ProductDetailPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Mô tả',
+                            Text(l.description,
                                 style: AppTextStyles.titleMedium),
                             const SizedBox(height: 8),
                             Text(product.description,
@@ -313,7 +315,7 @@ class ProductDetailPage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Text('Đánh giá',
+                                Text(l.reviews,
                                     style: AppTextStyles.titleMedium),
                                 const SizedBox(width: 10),
                                 Icon(Icons.star_rounded,
@@ -322,7 +324,7 @@ class ProductDetailPage extends StatelessWidget {
                                 Text(product.rating.toStringAsFixed(1),
                                     style: AppTextStyles.titleSmall),
                                 const SizedBox(width: 4),
-                                Text('(${product.reviewCount} đánh giá)',
+                                Text('(${product.reviewCount} ${l.reviews.toLowerCase()})',
                                     style: AppTextStyles.bodySmall),
                                 const Spacer(),
                                 TextButton.icon(
@@ -344,7 +346,7 @@ class ProductDetailPage extends StatelessWidget {
                                     );
                                   },
                                   icon: const Icon(Icons.edit_outlined, size: 16),
-                                  label: const Text('Viết đánh giá'),
+                                  label: Text(l.writeReview),
                                   style: TextButton.styleFrom(
                                     foregroundColor: AppColors.charcoalInk,
                                     padding: EdgeInsets.zero,
@@ -364,7 +366,7 @@ class ProductDetailPage extends StatelessWidget {
                             if (product.reviews.isEmpty)
                               Padding(
                                 padding: EdgeInsets.all(16.0),
-                                child: Text('Chưa có đánh giá nào cho sản phẩm này.',
+                                child: Text(l.noData,
                                     style: TextStyle(color: AppColors.stoneGray)),
                               )
                             else
@@ -440,7 +442,7 @@ class ProductDetailPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Tổng', style: AppTextStyles.bodySmall),
+                          Text(l.total, style: AppTextStyles.bodySmall),
                           Text(product.formattedPrice,
                               style: AppTextStyles.priceLarge),
                         ],
@@ -452,7 +454,7 @@ class ProductDetailPage extends StatelessWidget {
                             Expanded(
                               flex: 1,
                               child: PillButton(
-                                label: 'Giỏ',
+                                label: l.addToCart,
                                 icon: Icons.shopping_bag_outlined,
                                 isPrimary: false,
                                 isFullWidth: true,
@@ -470,7 +472,7 @@ class ProductDetailPage extends StatelessWidget {
                                       ));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('${product.name} đã được thêm vào giỏ hàng'),
+                                      content: Text('${product.name} ${l.addedToCart}'),
                                       backgroundColor: AppColors.charcoalInk,
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
@@ -484,7 +486,7 @@ class ProductDetailPage extends StatelessWidget {
                             Expanded(
                               flex: 1,
                               child: PillButton(
-                                label: 'Mua Ngay',
+                                label: l.buyNow,
                                 isPrimary: true,
                                 isFullWidth: true,
                                 onPressed: () {
@@ -592,6 +594,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -607,9 +610,9 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Viết đánh giá', style: AppTextStyles.titleLarge),
+              Text(l.writeReview, style: AppTextStyles.titleLarge),
               const SizedBox(height: 24),
-              const Center(child: Text('Chất lượng sản phẩm')),
+              Center(child: Text(l.reviews)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -631,7 +634,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
                 controller: _commentController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'Hãy chia sẻ nhận xét của bạn về sản phẩm...',
+                  hintText: l.reviewHint,
                   filled: true,
                   fillColor: AppColors.softWhite,
                   border: OutlineInputBorder(
@@ -642,7 +645,7 @@ class _WriteReviewSheetState extends State<_WriteReviewSheet> {
               ),
               const SizedBox(height: 24),
               PillButton(
-                label: 'Gửi Đánh Giá',
+                label: l.submitReview,
                 isFullWidth: true,
                 onPressed: () {
                   widget.onSubmit(_rating, _commentController.text);

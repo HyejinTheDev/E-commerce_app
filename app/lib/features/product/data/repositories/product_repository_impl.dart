@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_datasource.dart';
@@ -18,14 +20,30 @@ class ProductRepositoryImpl implements ProductRepository {
     String? sort,
     double? maxPrice,
   }) async {
-    final data = await _remoteDataSource.getProducts(
-      search: search,
-      categoryId: categoryId,
-      page: page,
-      limit: limit,
-      sort: sort,
-      maxPrice: maxPrice,
-    );
+    final prefs = await SharedPreferences.getInstance();
+    final cacheKey = 'cached_products_${categoryId ?? "all"}_${page}';
+
+    Map<String, dynamic> data;
+    try {
+      data = await _remoteDataSource.getProducts(
+        search: search,
+        categoryId: categoryId,
+        page: page,
+        limit: limit,
+        sort: sort,
+        maxPrice: maxPrice,
+      );
+      // Save to cache
+      await prefs.setString(cacheKey, jsonEncode(data));
+    } catch (e) {
+      // Fallback to offline cache
+      final cachedStr = prefs.getString(cacheKey);
+      if (cachedStr != null) {
+        data = jsonDecode(cachedStr) as Map<String, dynamic>;
+      } else {
+        rethrow;
+      }
+    }
 
     final products = (data['data'] as List<dynamic>)
         .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
@@ -41,8 +59,20 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Product> getProductById(String id) async {
-    final data = await _remoteDataSource.getProductById(id);
-    return ProductModel.fromJson(data);
+    final prefs = await SharedPreferences.getInstance();
+    final cacheKey = 'cached_product_$id';
+
+    try {
+      final data = await _remoteDataSource.getProductById(id);
+      await prefs.setString(cacheKey, jsonEncode(data));
+      return ProductModel.fromJson(data);
+    } catch (e) {
+      final cachedStr = prefs.getString(cacheKey);
+      if (cachedStr != null) {
+        return ProductModel.fromJson(jsonDecode(cachedStr));
+      }
+      rethrow;
+    }
   }
 
   @override

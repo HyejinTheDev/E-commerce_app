@@ -7,6 +7,7 @@ import '../domain/usecases/check_auth_usecase.dart';
 import '../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
+import '../../../core/utils/error_mapper.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase _loginUseCase;
@@ -60,15 +61,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userName: userInfo['name'] as String?,
       ));
     } catch (e) {
-      String message = 'Login failed';
-      if (e.toString().contains('401')) {
-        message = 'Email hoặc mật khẩu không đúng';
-      } else if (e.toString().contains('connection')) {
-        message = 'Không thể kết nối server';
-      }
       emit(state.copyWith(
         status: AuthStatus.error,
-        errorMessage: message,
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }
@@ -95,15 +90,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userName: userInfo['name'] as String? ?? event.name,
       ));
     } catch (e) {
-      String message = 'Registration failed';
-      if (e.toString().contains('409')) {
-        message = 'Email đã được sử dụng';
-      } else if (e.toString().contains('connection')) {
-        message = 'Không thể kết nối server';
-      }
       emit(state.copyWith(
         status: AuthStatus.error,
-        errorMessage: message,
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }

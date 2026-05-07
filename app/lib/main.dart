@@ -19,6 +19,9 @@ import 'features/auth/domain/usecases/check_auth_usecase.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/customer/cart/bloc/cart_bloc.dart';
 import 'features/voucher/domain/usecases/validate_voucher_usecase.dart';
+import 'core/widgets/offline_banner_wrapper.dart';
+
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 /// Global theme notifier — accessible from anywhere
 final themeNotifier = ThemeNotifier();
@@ -28,6 +31,8 @@ final localeProvider = LocaleProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_TYooMQauvdEDq54NiTphI7jx'; // Mock Stripe Test Key
+  await Stripe.instance.applySettings();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -93,6 +98,7 @@ class LucentApp extends StatelessWidget {
               Locale('en'),
             ],
             routerConfig: AppRouter.router,
+            builder: (context, child) => OfflineBannerWrapper(child: child!),
           ),
         ),
       ),

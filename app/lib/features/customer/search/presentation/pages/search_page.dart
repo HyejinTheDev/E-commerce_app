@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../core/widgets/product_card.dart';
@@ -10,11 +11,25 @@ import '../../bloc/search_bloc.dart';
 import '../../bloc/search_event.dart';
 import '../../bloc/search_state.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.vanillaCream,
       body: SafeArea(
@@ -27,13 +42,56 @@ class SearchPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                     child: LucentSearchBar(
-                      hint: 'Tìm kiếm sản phẩm...',
+                      controller: _searchController,
+                      hint: l.searchProducts,
                       onChanged: (query) => context
                           .read<SearchBloc>()
                           .add(SearchQueryChanged(query)),
                     ),
                   ),
                 ),
+
+                // ─── Recent Searches ───
+                if (state.query.isEmpty && state.history.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(l.recentSearches, style: AppTextStyles.titleMedium),
+                          TextButton(
+                            onPressed: () => context.read<SearchBloc>().add(const SearchHistoryCleared()),
+                            child: Text(l.clearAll, style: AppTextStyles.bodySmall.copyWith(color: AppColors.stoneGray)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final query = state.history[index];
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                          leading: Icon(Icons.history_rounded, color: AppColors.stoneGray, size: 22),
+                          title: Text(query, style: AppTextStyles.bodyLarge),
+                          trailing: IconButton(
+                            icon: Icon(Icons.close_rounded, size: 18, color: AppColors.stoneGray),
+                            onPressed: () => context.read<SearchBloc>().add(SearchHistoryRemoved(query)),
+                          ),
+                          onTap: () {
+                            _searchController.text = query;
+                            // Set cursor to end
+                            _searchController.selection = TextSelection.fromPosition(TextPosition(offset: query.length));
+                            context.read<SearchBloc>().add(SearchQueryChanged(query));
+                          },
+                        );
+                      },
+                      childCount: state.history.length,
+                    ),
+                  ),
+                ],
 
                 // ─── Filter Chips ───
                 SliverToBoxAdapter(
@@ -68,8 +126,8 @@ class SearchPage extends StatelessWidget {
                       children: [
                         Text(
                           state.query.isEmpty && state.selectedFilter == 0
-                              ? 'Gợi ý cho bạn'
-                              : '${state.totalResults} kết quả',
+                              ? l.suggestedForYou
+                              : l.nResults(state.totalResults),
                           style: AppTextStyles.bodySmall,
                         ),
                         const Spacer(),
@@ -103,11 +161,11 @@ class SearchPage extends StatelessWidget {
                             Icon(Icons.search_off_rounded,
                                 size: 64, color: AppColors.stoneGray.withValues(alpha: 0.5)),
                             const SizedBox(height: 16),
-                            Text('Không tìm thấy sản phẩm',
+                            Text(l.noProductsFound,
                                 style: AppTextStyles.titleSmall
                                     .copyWith(color: AppColors.stoneGray)),
                             const SizedBox(height: 4),
-                            Text('Thử từ khóa khác hoặc bỏ bộ lọc',
+                            Text(l.tryDifferentKeyword,
                                 style: AppTextStyles.bodySmall),
                           ],
                         ),
@@ -160,7 +218,7 @@ class SearchPage extends StatelessWidget {
                                 shape: const StadiumBorder(),
                               ),
                               child:
-                                  Text('Xem Thêm', style: AppTextStyles.titleSmall),
+                                  Text(l.loadMore, style: AppTextStyles.titleSmall),
                             ),
                           ),
                         ),
@@ -187,21 +245,22 @@ class _SortButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return PopupMenuButton<String>(
       onSelected: onSelected,
       offset: const Offset(0, 36),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       color: AppColors.softWhite,
       itemBuilder: (context) => [
-        _buildItem('newest', 'Mới nhất', Icons.schedule_rounded),
-        _buildItem('price_asc', 'Giá tăng dần', Icons.arrow_upward_rounded),
-        _buildItem('price_desc', 'Giá giảm dần', Icons.arrow_downward_rounded),
-        _buildItem('best_rated', 'Đánh giá cao', Icons.star_rounded),
+        _buildItem('newest', l.sortNewest, Icons.schedule_rounded),
+        _buildItem('price_asc', l.sortPriceAsc, Icons.arrow_upward_rounded),
+        _buildItem('price_desc', l.sortPriceDesc, Icons.arrow_downward_rounded),
+        _buildItem('best_rated', l.sortBestRated, Icons.star_rounded),
       ],
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Sắp xếp: ', style: AppTextStyles.bodySmall),
+          Text(l.sortBy, style: AppTextStyles.bodySmall),
           Text(currentLabel,
               style: AppTextStyles.titleSmall.copyWith(fontSize: 13)),
           Icon(Icons.keyboard_arrow_down_rounded,
