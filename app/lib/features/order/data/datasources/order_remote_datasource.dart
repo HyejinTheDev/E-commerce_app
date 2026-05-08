@@ -1,5 +1,7 @@
 import '../../../../core/network/dio_client.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class OrderRemoteDataSource {
   final DioClient _client;
   OrderRemoteDataSource(this._client);

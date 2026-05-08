@@ -3,8 +3,10 @@ import '../../domain/entities/voucher.dart';
 import '../../domain/repositories/voucher_repository.dart';
 import '../datasources/voucher_remote_datasource.dart';
 import '../models/voucher_model.dart';
+import 'package:injectable/injectable.dart';
 
 /// Voucher repository implementation — Data Layer
+@LazySingleton(as: VoucherRepository)
 class VoucherRepositoryImpl implements VoucherRepository {
   final VoucherRemoteDataSource _remoteDataSource;
 

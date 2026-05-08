@@ -1,5 +1,6 @@
 import '../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
 class RegisterParams {
   final String email;
@@ -25,6 +26,7 @@ class RegisterParams {
   });
 }
 
+@injectable
 class RegisterUseCase extends UseCase<Map<String, dynamic>, RegisterParams> {
   final AuthRepository _repository;
   RegisterUseCase(this._repository);

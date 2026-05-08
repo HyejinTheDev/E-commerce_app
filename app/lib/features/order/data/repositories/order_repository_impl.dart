@@ -2,7 +2,9 @@ import '../../domain/entities/order.dart';
 import '../../domain/repositories/order_repository.dart';
 import '../datasources/order_remote_datasource.dart';
 import '../models/order_model.dart';
+import 'package:injectable/injectable.dart' hide Order;
 
+@LazySingleton(as: OrderRepository)
 class OrderRepositoryImpl implements OrderRepository {
   final OrderRemoteDataSource _remoteDataSource;
   OrderRepositoryImpl(this._remoteDataSource);

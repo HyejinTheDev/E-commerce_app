@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/models/cart_item.dart';
 import '../../../voucher/domain/usecases/validate_voucher_usecase.dart';
+import '../../../../core/utils/error_mapper.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 
@@ -99,10 +100,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         appliedVoucher: voucher,
         voucherLoading: false,
       ));
-    } on Exception catch (e) {
+    } catch (e) {
       emit(state.copyWith(
         voucherLoading: false,
-        voucherError: e.toString().replaceFirst('Exception: ', ''),
+        voucherError: ErrorMapper.getErrorMessage(e),
       ));
     }
   }

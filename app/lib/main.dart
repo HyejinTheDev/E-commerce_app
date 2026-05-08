@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ecommerce_app/l10n/app_localizations.dart';
 import 'core/di/injection.dart';
 import 'core/network/dio_client.dart';
@@ -31,6 +32,8 @@ final localeProvider = LocaleProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  
   Stripe.publishableKey = 'pk_test_TYooMQauvdEDq54NiTphI7jx'; // Mock Stripe Test Key
   await Stripe.instance.applySettings();
 

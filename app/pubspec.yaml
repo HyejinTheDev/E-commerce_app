@@ -19,7 +19,7 @@ dependencies:
 
   # Dependency Injection
   get_it: ^7.6.7
-  injectable: ^2.3.2
+  injectable: ^2.6.0
 
   # Networking
   dio: ^5.4.1
@@ -51,6 +51,8 @@ dependencies:
   cupertino_icons: ^1.0.6
   connectivity_plus: ^7.1.1
   flutter_stripe: ^10.1.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -59,11 +61,12 @@ dev_dependencies:
   mocktail: ^1.0.3
 
   # Code Generation
-  build_runner: ^2.4.8
+  build_runner: ^2.4.13
   freezed: ^2.4.7
   json_serializable: ^6.7.1
-  retrofit_generator: ^8.1.0
-  injectable_generator: ^2.4.1
+#   retrofit_generator: 8.1.0
+  injectable_generator: ^2.6.2
+  bloc_test: ^9.1.7
 
 flutter:
   generate: true

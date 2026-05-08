@@ -1,9 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/dio_client.dart';
+import 'package:injectable/injectable.dart';
 
 /// Remote data source for authentication API calls.
 /// Handles raw HTTP requests and token persistence.
+@lazySingleton
 class AuthRemoteDataSource {
   final DioClient _client;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();

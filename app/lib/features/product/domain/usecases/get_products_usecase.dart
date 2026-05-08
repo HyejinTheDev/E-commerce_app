@@ -1,6 +1,7 @@
 import '../../../../core/usecases/usecase.dart';
 import '../entities/product.dart';
 import '../repositories/product_repository.dart';
+import 'package:injectable/injectable.dart';
 
 class GetProductsParams {
   final String? search;
@@ -15,6 +16,7 @@ class GetProductsParams {
   });
 }
 
+@injectable
 class GetProductsUseCase extends UseCase<ProductListResponse, GetProductsParams> {
   final ProductRepository _repository;
   GetProductsUseCase(this._repository);

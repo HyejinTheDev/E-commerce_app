@@ -1,7 +1,9 @@
 import '../entities/voucher.dart';
 import '../repositories/voucher_repository.dart';
+import 'package:injectable/injectable.dart';
 
 /// Validate a voucher code — Domain UseCase
+@injectable
 class ValidateVoucherUseCase {
   final VoucherRepository _repository;
 

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../product/domain/repositories/product_repository.dart';
+import '../../../../core/utils/error_mapper.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -31,7 +32,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       emit(state.copyWith(
         status: HomeStatus.error,
-        errorMessage: 'Failed to load products: $e',
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }

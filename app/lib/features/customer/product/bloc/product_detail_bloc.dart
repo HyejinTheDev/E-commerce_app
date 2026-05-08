@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../product/domain/repositories/product_repository.dart';
+import '../../../../core/utils/error_mapper.dart';
 import 'product_detail_event.dart';
 import 'product_detail_state.dart';
 
@@ -30,7 +31,7 @@ class ProductDetailBloc
     } catch (e) {
       emit(state.copyWith(
         status: ProductDetailStatus.error,
-        errorMessage: 'Product not found: $e',
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }
@@ -68,7 +69,7 @@ class ProductDetailBloc
     } catch (e) {
       emit(state.copyWith(
         isSubmittingReview: false,
-        errorMessage: 'Không thể gửi đánh giá: $e',
+        errorMessage: ErrorMapper.getErrorMessage(e),
       ));
     }
   }

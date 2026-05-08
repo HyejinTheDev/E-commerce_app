@@ -1,6 +1,7 @@
 import '../../../../core/usecases/usecase.dart';
 import '../entities/order.dart';
 import '../repositories/order_repository.dart';
+import 'package:injectable/injectable.dart' hide Order;
 
 class CreateOrderParams {
   final String addressId;
@@ -16,6 +17,7 @@ class CreateOrderParams {
   });
 }
 
+@injectable
 class CreateOrderUseCase extends UseCase<Order, CreateOrderParams> {
   final OrderRepository _repository;
   CreateOrderUseCase(this._repository);

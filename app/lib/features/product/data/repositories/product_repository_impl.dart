@@ -1,15 +1,25 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_datasource.dart';
 import '../models/product_model.dart';
+import 'package:injectable/injectable.dart';
 
 /// Concrete implementation of [ProductRepository]
+@LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource _remoteDataSource;
+  static const String _boxName = 'productCacheBox';
 
   ProductRepositoryImpl(this._remoteDataSource);
+
+  Future<Box> _getBox() async {
+    if (Hive.isBoxOpen(_boxName)) {
+      return Hive.box(_boxName);
+    }
+    return await Hive.openBox(_boxName);
+  }
 
   @override
   Future<ProductListResponse> getProducts({
@@ -20,7 +30,7 @@ class ProductRepositoryImpl implements ProductRepository {
     String? sort,
     double? maxPrice,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    final box = await _getBox();
     final cacheKey = 'cached_products_${categoryId ?? "all"}_${page}';
 
     Map<String, dynamic> data;
@@ -33,11 +43,11 @@ class ProductRepositoryImpl implements ProductRepository {
         sort: sort,
         maxPrice: maxPrice,
       );
-      // Save to cache
-      await prefs.setString(cacheKey, jsonEncode(data));
+      // Save to Hive cache
+      await box.put(cacheKey, jsonEncode(data));
     } catch (e) {
       // Fallback to offline cache
-      final cachedStr = prefs.getString(cacheKey);
+      final cachedStr = box.get(cacheKey) as String?;
       if (cachedStr != null) {
         data = jsonDecode(cachedStr) as Map<String, dynamic>;
       } else {
@@ -59,15 +69,15 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Product> getProductById(String id) async {
-    final prefs = await SharedPreferences.getInstance();
+    final box = await _getBox();
     final cacheKey = 'cached_product_$id';
 
     try {
       final data = await _remoteDataSource.getProductById(id);
-      await prefs.setString(cacheKey, jsonEncode(data));
+      await box.put(cacheKey, jsonEncode(data));
       return ProductModel.fromJson(data);
     } catch (e) {
-      final cachedStr = prefs.getString(cacheKey);
+      final cachedStr = box.get(cacheKey) as String?;
       if (cachedStr != null) {
         return ProductModel.fromJson(jsonDecode(cachedStr));
       }

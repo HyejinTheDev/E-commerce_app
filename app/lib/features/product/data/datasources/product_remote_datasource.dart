@@ -1,6 +1,8 @@
 import '../../../../core/network/dio_client.dart';
+import 'package:injectable/injectable.dart';
 
 /// Remote data source for product API calls
+@lazySingleton
 class ProductRemoteDataSource {
   final DioClient _client;
 

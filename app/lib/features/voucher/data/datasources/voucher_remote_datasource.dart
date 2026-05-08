@@ -1,6 +1,8 @@
 import '../../../../core/network/dio_client.dart';
+import 'package:injectable/injectable.dart';
 
 /// Voucher remote data source — calls POST /vouchers/validate
+@lazySingleton
 class VoucherRemoteDataSource {
   final DioClient _client;
 

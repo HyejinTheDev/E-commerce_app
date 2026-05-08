@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class SearchHistoryRepository {
   Future<List<String>> getSearchHistory();
@@ -7,6 +8,7 @@ abstract class SearchHistoryRepository {
   Future<void> removeSearchQuery(String query);
 }
 
+@LazySingleton(as: SearchHistoryRepository)
 class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
   static const String _key = 'search_history';
 

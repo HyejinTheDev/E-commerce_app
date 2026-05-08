@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/datasources/seller_remote_datasource.dart';
+import '../../../../core/utils/error_mapper.dart';
 import 'seller_event.dart';
 import 'seller_state.dart';
 
@@ -31,7 +32,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
         totalRevenue: (stats?['totalRevenue'] as num?)?.toDouble() ?? 0,
       ));
     } catch (e) {
-      emit(state.copyWith(status: SellerStatus.error, errorMessage: e.toString()));
+      emit(state.copyWith(status: SellerStatus.error, errorMessage: ErrorMapper.getErrorMessage(e)));
     }
   }
 
@@ -43,7 +44,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
       final products = data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
       emit(state.copyWith(status: SellerStatus.loaded, products: products));
     } catch (e) {
-      emit(state.copyWith(status: SellerStatus.error, errorMessage: e.toString()));
+      emit(state.copyWith(status: SellerStatus.error, errorMessage: ErrorMapper.getErrorMessage(e)));
     }
   }
 
@@ -54,7 +55,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
       final updatedProducts = state.products.where((p) => p['id'] != event.productId).toList();
       emit(state.copyWith(products: updatedProducts));
     } catch (e) {
-      emit(state.copyWith(errorMessage: 'Xóa thất bại: $e'));
+      emit(state.copyWith(errorMessage: ErrorMapper.getErrorMessage(e)));
     }
   }
 
@@ -66,7 +67,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
       final orders = data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
       emit(state.copyWith(status: SellerStatus.loaded, orders: orders));
     } catch (e) {
-      emit(state.copyWith(status: SellerStatus.error, errorMessage: e.toString()));
+      emit(state.copyWith(status: SellerStatus.error, errorMessage: ErrorMapper.getErrorMessage(e)));
     }
   }
 
@@ -76,7 +77,7 @@ class SellerBloc extends Bloc<SellerEvent, SellerState> {
       await _dataSource.updateOrderStatus(event.orderId, event.status);
       add(const SellerOrdersLoaded()); // Refresh
     } catch (e) {
-      emit(state.copyWith(errorMessage: 'Cập nhật thất bại: $e'));
+      emit(state.copyWith(errorMessage: ErrorMapper.getErrorMessage(e)));
     }
   }
 }

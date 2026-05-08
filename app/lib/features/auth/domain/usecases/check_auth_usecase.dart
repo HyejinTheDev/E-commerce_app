@@ -1,6 +1,8 @@
 import '../../../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class CheckAuthUseCase extends UseCase<bool, NoParams> {
   final AuthRepository _repository;
   CheckAuthUseCase(this._repository);
