@@ -218,26 +218,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _IconBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onTap;
-  const _IconBtn(this.icon, {this.onTap});
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: AppColors.pearlMist,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(icon, size: 22, color: AppColors.charcoalInk),
-      ),
-    );
-  }
-}
 
 class _NotifBell extends StatefulWidget {
   @override

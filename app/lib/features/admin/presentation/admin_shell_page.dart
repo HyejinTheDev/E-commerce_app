@@ -418,7 +418,7 @@ class _AdminShellPageState extends State<AdminShellPage> {
                 ),
                 Switch.adaptive(
                   value: isAvailable,
-                  activeColor: const Color(0xFF66BB6A),
+                  activeTrackColor: const Color(0xFF66BB6A),
                   onChanged: (v) => _toggleDriver(driver['id'], v),
                 ),
               ],

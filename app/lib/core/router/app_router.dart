@@ -34,7 +34,6 @@ import '../widgets/lucent_bottom_nav.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
-import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/bloc/auth_state.dart';
 // Seller
 import '../../features/seller/presentation/pages/seller_shell_page.dart';
@@ -335,7 +334,6 @@ class _SplashWrapper extends StatefulWidget {
 
 class _SplashWrapperState extends State<_SplashWrapper> {
   bool _hasSeenOnboarding = false;
-  bool _prefsLoaded = false;
 
   @override
   void initState() {
@@ -348,7 +346,6 @@ class _SplashWrapperState extends State<_SplashWrapper> {
     if (mounted) {
       setState(() {
         _hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
-        _prefsLoaded = true;
       });
     }
   }

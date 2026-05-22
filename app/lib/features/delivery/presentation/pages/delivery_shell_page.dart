@@ -208,7 +208,7 @@ class _DeliveryShellPageState extends State<DeliveryShellPage> {
                         Switch(
                           value: _isAvailable,
                           onChanged: _toggleAvailability,
-                          activeColor: const Color(0xFF4CAF50),
+                          activeTrackColor: const Color(0xFF4CAF50),
                         ),
                       ],
                     ),

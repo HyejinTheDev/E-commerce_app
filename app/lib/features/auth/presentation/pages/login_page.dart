@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoadingCredentials = true;
 
   @override
   void initState() {
@@ -39,13 +38,12 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text = credentials['password'] ?? '';
         setState(() {
           _rememberMe = true;
-          _isLoadingCredentials = false;
         });
       } else {
-        if (mounted) setState(() => _isLoadingCredentials = false);
+        if (mounted) setState(() {});
       }
     } catch (_) {
-      if (mounted) setState(() => _isLoadingCredentials = false);
+      // Silently ignore credential loading errors
     }
   }
 

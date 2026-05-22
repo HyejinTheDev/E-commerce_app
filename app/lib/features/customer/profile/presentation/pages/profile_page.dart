@@ -5,8 +5,6 @@ import 'package:ecommerce_app/l10n/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_text_styles.dart';
 import '../../../../../main.dart' show localeProvider;
-import '../../../../../core/di/injection.dart';
-import '../../../../../core/network/dio_client.dart';
 import '../../../../auth/bloc/auth_bloc.dart';
 import '../../../../auth/bloc/auth_event.dart';
 import '../../../../auth/bloc/auth_state.dart';
@@ -516,14 +514,12 @@ class _StatCard extends StatelessWidget {
 class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String? badge;
   final Widget? trailing;
   final VoidCallback onTap;
   final bool showDivider;
   const _MenuItem(
       {required this.icon,
       required this.label,
-      this.badge,
       this.trailing,
       required this.onTap,
       this.showDivider = true});
@@ -541,20 +537,6 @@ class _MenuItem extends StatelessWidget {
                 Icon(icon, size: 22, color: AppColors.charcoalInk),
                 const SizedBox(width: 14),
                 Expanded(child: Text(label, style: AppTextStyles.titleSmall)),
-                if (badge != null)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.terracottaBlush,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Text(badge!,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600)),
-                  ),
                 if (trailing != null) trailing!,
                 const SizedBox(width: 8),
                 Icon(Icons.chevron_right_rounded,
@@ -620,7 +602,7 @@ class _ToggleItem extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.sageGreen,
+            activeTrackColor: AppColors.sageGreen,
             inactiveTrackColor: AppColors.pearlMist,
           ),
         ],
