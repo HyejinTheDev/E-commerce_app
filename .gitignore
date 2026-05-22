@@ -1,3 +1,8 @@
-# Ignore backend and make_fe directories
-backend/
+# Ignore make_fe directory
 make_fe/
+
+# Backend ignores
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/uploads/
